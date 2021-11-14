@@ -32,8 +32,6 @@
       </v-col>
     </v-row>
     
-    <v-card :width="this.width">
-
     <trading-vue
       :width="this.width"
       :height="this.height"
@@ -46,7 +44,7 @@
       :color-text="colors.colorText"
       >
       </trading-vue>
-    </v-card>
+ ]
     <div> {{ fromServer.flags }} </div>
   </div>
 </template>
@@ -138,7 +136,6 @@ export default {
       console.log(data)
       this.fromServer = data;
       this.chartData.chart.data = this.toOHLCV(data.candles);
-
 
       this.chartData.onchart[0].data = data.candles.map( 
         (candle) => {

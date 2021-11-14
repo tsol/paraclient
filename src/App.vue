@@ -1,16 +1,17 @@
 <template>
 <v-app>
-    <Chart />
+    <Tickers />
 </v-app>
 </template>
 
 <script>
-import Chart from './components/Chart.vue'
+// import Chart from './components/Chart.vue'
+import Tickers from './components/Tickers.vue'
 
 export default {
   name: 'App',
   components: {
-    Chart
+    Tickers
   }
 }
 </script>
