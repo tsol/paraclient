@@ -20,7 +20,7 @@
         
       </v-col>
       <v-col>
-        <v-btn @click="pingServer()">Ping Server</v-btn>
+        <v-btn @click="pingServer()">REFRESH</v-btn>
       </v-col>
       <v-col v-for="item in debugSources" :key="item">
         <v-switch 
@@ -139,12 +139,22 @@ export default {
       this.fromServer = data;
       this.chartData.chart.data = this.toOHLCV(data.candles);
 
+
+      this.chartData.onchart[0].data = data.candles.map( 
+        (candle) => {
+          if (candle.visualDebug.length > 0) {
+            return [candle.openTime, candle];
+          }
+        }
+      );
+
+      /*
       for (var candle of data.candles) {
         if (candle.visualDebug.length === 0)
           { continue; }
         this.chartData.onchart[0].data.push( [ candle.openTime, candle ] );
       }
-
+      */
       this.chartData.onchart[1].settings.bars = this.getBarsDebug(data.candles);
       this.chartData.onchart[2].data = this.getChartDebug(data.candles,'mac9');
       this.chartData.offchart[0].data = this.getChartDebug(data.candles,'atr14');
