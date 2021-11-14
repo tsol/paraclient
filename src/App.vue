@@ -1,8 +1,8 @@
 <template>
-<div id="app">
+<v-app>
     <Chart />
-</div>
- </template>
+</v-app>
+</template>
 
 <script>
 import Chart from './components/Chart.vue'
@@ -23,4 +23,5 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
 </style>

@@ -1,16 +1,38 @@
 <template>
   <div>
-    <p v-if="isConnected">CONNECTED</p>
-    <button @click="pingServer()">Ping Server</button>
-
-    <v-btn-toggle
-          v-model="chartData.onchart[0].filterSources"
-          rounded
+    
+    <v-row>
+      <v-col>
+        <v-chip v-if="isConnected"
+          class="ma-2"
+          color="green"
+          text-color="white"
         >
-          <v-btn v-for="item in debugSources" :key="item">
-            {{ item }}
-          </v-btn>
-    </v-btn-toggle>
+        Connected
+        </v-chip>      
+        <v-chip v-else
+          class="ma-2"
+          color="red"
+          text-color="white"
+        >
+        disconnected
+        </v-chip>      
+        
+      </v-col>
+      <v-col>
+        <v-btn @click="pingServer()">Ping Server</v-btn>
+      </v-col>
+      <v-col v-for="item in debugSources" :key="item">
+        <v-switch 
+          v-model="chartData.onchart[0].settings.filterSources"
+          color="primary"
+          :label="item"
+          :value="item"
+        ></v-switch>
+      </v-col>
+    </v-row>
+    
+    <v-card :width="this.width">
 
     <trading-vue
       :width="this.width"
@@ -24,6 +46,7 @@
       :color-text="colors.colorText"
       >
       </trading-vue>
+    </v-card>
     <div> {{ fromServer.flags }} </div>
   </div>
 </template>
