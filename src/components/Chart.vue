@@ -1,26 +1,10 @@
 <template>
-  <div>
-    
+  <div>    
     <v-row>
       <v-col>
-        <v-chip v-if="isConnected"
-          class="ma-2"
-          color="green"
-          text-color="white"
-        >
-        Connected
-        </v-chip>      
-        <v-chip v-else
-          class="ma-2"
-          color="red"
-          text-color="white"
-        >
-        disconnected
-        </v-chip>      
-        
-      </v-col>
-      <v-col>
-        <v-btn @click="pingServer()">REFRESH</v-btn>
+        <v-btn @click="refresh()">
+          <v-icon>mdi-reload</v-icon>  
+        </v-btn>
       </v-col>
       <v-col v-for="item in debugSources" :key="item">
         <v-switch 
@@ -35,7 +19,7 @@
     <trading-vue
       :width="this.width"
       :height="this.height"
-      :titleTxt="fromServer.id" 
+      :titleTxt="this.tickerId" 
       :overlays="overlays"
       :data="chartData"
       :timezone="parseInt(3)"
@@ -45,7 +29,7 @@
       >
       </trading-vue>
  ]
-    <div> {{ fromServer.flags }} </div>
+    <div> {{ flags }} </div>
   </div>
 </template>
 
@@ -59,6 +43,7 @@ import ATR from './overlays/ATR.vue'
 
 export default {
   components: { TradingVue },
+  props: ['tickerId','candles','flags'],
   data: () => ({
       debugSources: ['extremum','hl_trend','candlepatterns'],
       overlays: [ValueBars, Flags, ATR],
@@ -69,24 +54,20 @@ export default {
       },
       width: window.innerWidth * 0.8,
       height: window.innerHeight * 0.8,
-      isConnected: false,
-      socketMessage: '',
-      fromServer: {
-        id: 'N/A',
-        candles: [],
-        flags: {}
-      },
-      chartData: {
+  }),
+  computed: {
+      chartData() {
+        return {  
         "chart": {
           "type": "Candles",
-          "data": [],
+          "data": this.ohlcv,
           "settings": { }
         },
         "onchart": [
           {
             "name": "Flags 10",
             "type": "Flags",
-            "data": [],
+            "data": this.flagsData,
             "settings": { 
               filterSources: ['extremum']
             }
@@ -95,12 +76,12 @@ export default {
             "name": "ValueBars 10",
             "type": "ValueBars",
             "data": [],
-            "settings": { bars: [] }
+            "settings": { bars: this.getBarsDebug() }
           },
           {
             "name": "MAC9",
             "type": "SMA",
-            "data": [],
+            "data": this.filterDebug('mac9'),
             "settings": { color: 'blue' }
           }
         ],
@@ -108,64 +89,34 @@ export default {
           {
             "name": "ATR 14",
             "type": "ATR",
-            "data": [],
+            "data": this.filterDebug('atr14'),
             "settings": { }
           },
         ]
-      }
-  }),
-  computed: {
-    ohlcv() {
-      return this.fromServer.candles.map(
-          (a) => [ a.openTime, a.open, a.high, a.low, a.close, a.volume ] 
-      )
-    }
-  },
-  sockets: {
-    connect() {
-      // Fired when the socket connects.
-      this.isConnected = true;
-    },
-
-    disconnect() {
-      this.isConnected = false;
-    },
-
-    chart(data) {
-      console.log("received fromServer")
-      console.log(data)
-      this.fromServer = data;
-      this.chartData.chart.data = this.toOHLCV(data.candles);
-
-      this.chartData.onchart[0].data = data.candles.map( 
-        (candle) => {
-          if (candle.visualDebug.length > 0) {
-            return [candle.openTime, candle];
-          }
         }
-      );
-
-      /*
-      for (var candle of data.candles) {
-        if (candle.visualDebug.length === 0)
-          { continue; }
-        this.chartData.onchart[0].data.push( [ candle.openTime, candle ] );
+      },
+      ohlcv() {
+        return this.candles.map(
+          (a) => [ a.openTime, a.open, a.high, a.low, a.close, a.volume ] 
+        )
+      },
+      flagsData() {
+        return this.candles.map(
+          (candle) => {
+            if (candle.visualDebug.length > 0) {
+              return [candle.openTime, candle];
+            }
+        });        
       }
-      */
-      this.chartData.onchart[1].settings.bars = this.getBarsDebug(data.candles);
-      this.chartData.onchart[2].data = this.getChartDebug(data.candles,'mac9');
-      this.chartData.offchart[0].data = this.getChartDebug(data.candles,'atr14');
-    }
-
   },
   methods: {
     onResize() {
       this.width = window.innerWidth * 0.8
       this.height = window.innerHeight * 0.8
     },
-    getChartDebug(candles,name) {
+    filterDebug(name) {
       let data = [];
-      for (var candle of candles) {
+      for (var candle of this.candles) {
         candle.visualDebug.forEach( (vd) => {
           if (vd.name === name) {
             data.push([candle.openTime, vd.value]);
@@ -174,9 +125,9 @@ export default {
       }
       return data;
     },
-    getBarsDebug(candles) {
+    getBarsDebug() {
       let bars = [];
-      for (var candle of candles) {
+      for (var candle of this.candles) {
         candle.visualDebug.forEach( (vd) => {
           if (vd.type === 'hbar') {
             bars.push(vd);
@@ -185,14 +136,8 @@ export default {
       }
       return bars;
     },
-    toOHLCV(serverCandles) {
-      return serverCandles.map(
-          (a) => [ a.openTime, a.open, a.high, a.low, a.close, a.volume ] 
-      )
-    },
-    pingServer() {
-      // Send the "pingServer" event to the server.
-      this.$socket.emit('give_data', '')
+    refresh() {
+      this.$socket.emit('get_chart', this.tickerId)
     }
   },
   mounted() {

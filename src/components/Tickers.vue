@@ -46,7 +46,7 @@
 
         <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length">
-            <div>{{ item }}</div>
+            <Chart :tickerId="item.id" :flags="item.flags" :candles="item.chart.candles" />
             </td>
         </template>
 
@@ -55,8 +55,10 @@
 </template>
 
 <script>
+import Chart from './Chart.vue';
+
 export default {
-  components: { },
+  components: { Chart },
   data: () => ({
     isConnected: false,
     tickers: [],
@@ -88,7 +90,26 @@ export default {
     tickers(data) {
         console.log('TICKERS RECEIVED:');
         console.log(JSON.stringify(data));
+        
+        data.forEach( (t) => {
+            if (! t.chart) {
+                let exists = this.tickers.find( e => e.id === t.id );
+                if (exists && exists.chart) {
+                    t.chart = exists.chart;
+                }
+                else {
+                    t.chart = { candles: [] }
+                }
+            }       
+        });
+
         this.tickers = data;
+ 
+    },
+    chart(data) {
+        this.tickers.find( t => t.id === data.id).chart.candles = data.candles;
+        console.log('CHART_RECEIVED:')
+        console.log(this.tickers);
     }
   },
   mounted() {
