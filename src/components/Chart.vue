@@ -8,14 +8,14 @@
       </v-col>
       <v-col v-for="item in debugSources" :key="item">
         <v-switch 
-          v-model="chartData.onchart[0].settings.filterSources"
+          v-model="filteredSources"
           color="primary"
           :label="item"
           :value="item"
         ></v-switch>
       </v-col>
     </v-row>
-    
+
     <trading-vue
       :width="this.width"
       :height="this.height"
@@ -45,7 +45,8 @@ export default {
   components: { TradingVue },
   props: ['tickerId','candles','flags'],
   data: () => ({
-      debugSources: ['extremum','hl_trend','candlepatterns'],
+      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom'],
+      filteredSources: ['extremum'],
       overlays: [ValueBars, Flags, ATR],
       colors: {
         colorBack: '#fff',
@@ -69,7 +70,7 @@ export default {
             "type": "Flags",
             "data": this.flagsData,
             "settings": { 
-              filterSources: ['extremum']
+              filterSources: this.filteredSources
             }
           },
           {

@@ -13,7 +13,7 @@
                 disconnected
             </v-chip> 
         </div>
-        <v-btn @click="this.$socket.emit('list_tickers')">
+        <v-btn @click="reloadTickers()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
 
@@ -77,6 +77,9 @@ export default {
     ],
   }),
   methods: {
+    reloadTickers() {
+        this.$socket.emit('list_tickers', '')
+    },
     rowExpandEvent(event) {
       if (event.value) {
         let item = event.item;
@@ -113,7 +116,7 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit('list_tickers', '')
+    this.reloadTickers();
   },
   computed: {
 
