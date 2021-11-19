@@ -45,7 +45,7 @@ export default {
   components: { TradingVue },
   props: ['tickerId','candles','flags'],
   data: () => ({
-      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom'],
+      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom','hills'],
       filteredSources: ['extremum'],
       overlays: [ValueBars, Flags, ATR],
       colors: {
@@ -77,12 +77,12 @@ export default {
             "name": "ValueBars 10",
             "type": "ValueBars",
             "data": [],
-            "settings": { bars: this.getBarsDebug() }
+            "settings": { bars: this.flags.vlevels }
           },
           {
-            "name": "MAC9",
+            "name": "MAC20",
             "type": "SMA",
-            "data": this.filterDebug('mac9'),
+            "data": this.filterDebug('mac20'),
             "settings": { color: 'blue' }
           }
         ],
@@ -125,17 +125,6 @@ export default {
         });
       }
       return data;
-    },
-    getBarsDebug() {
-      let bars = [];
-      for (var candle of this.candles) {
-        candle.visualDebug.forEach( (vd) => {
-          if (vd.type === 'hbar') {
-            bars.push(vd);
-          }
-        });
-      }
-      return bars;
     },
     refresh() {
       this.$socket.emit('get_chart', this.tickerId)

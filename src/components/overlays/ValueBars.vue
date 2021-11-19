@@ -11,13 +11,21 @@ export default {
         drawHorizontalBar(layout,ctx,item) {
             ctx.fillStyle = item.color || 'grey';
             ctx.globalAlpha = item.alpha || 0.3;
-            let fromX = layout.t2screen(item.fromX)
+            let fromX = layout.t2screen(item.x0)
             let toX = layout.t2screen(Date.now())
             let width = Math.abs(toX-fromX);
-            let fromY = layout.$2screen(item.fromY)
-            let toY = layout.$2screen(item.toY)
+            let fromY = layout.$2screen(item.y0)
+            let toY = layout.$2screen(item.y1)
             let height = toY-fromY;
             ctx.fillRect(fromX,fromY,width,height)
+
+            ctx.globalAlpha = 1.0;
+            ctx.strokeStyle = 'black'
+            ctx.fillStyle = '#555'
+            ctx.font = '10px Arial'
+
+            ctx.fillText(item.w+' ('+item.s+'/'+item.r+') ['+item.sW+'/'+item.rW+']' ,
+             toX+10, fromY+height/2 )
             
         },
         draw(ctx) {
@@ -27,7 +35,6 @@ export default {
                 this.drawHorizontalBar(layout,ctx,vd)
             }
             
-            ctx.globalAlpha = 1.0;
 
         },
         use_for() { return ['ValueBars'] },
