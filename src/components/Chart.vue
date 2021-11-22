@@ -74,10 +74,16 @@ export default {
             }
           },
           {
-            "name": "ValueBars 10",
+            "name": "ValueBars CUR",
             "type": "ValueBars",
             "data": [],
             "settings": { bars: this.flags.vlevels }
+          },
+          {
+            "name": "ValueBars HIGH",
+            "type": "ValueBars",
+            "data": [],
+            "settings": { bars: this.flags.vlevels_high, color: 'yellow' }
           },
           {
             "name": "MAC20",

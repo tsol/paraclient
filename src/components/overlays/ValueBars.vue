@@ -9,7 +9,7 @@ export default {
         legend() { return [] },
     
         drawHorizontalBar(layout,ctx,item) {
-            ctx.fillStyle = item.color || 'grey';
+            ctx.fillStyle = item.color || this.color;
             ctx.globalAlpha = item.alpha || 0.3;
             let fromX = layout.t2screen(item.x0)
             let toX = layout.t2screen(Date.now())
@@ -30,7 +30,9 @@ export default {
         },
         draw(ctx) {
             let layout = this.$props.layout
-  
+            if (! this.$props.settings.bars ) {
+                return;
+            }
             for (var vd of this.$props.settings.bars) {
                 this.drawHorizontalBar(layout,ctx,vd)
             }
@@ -51,7 +53,7 @@ export default {
     },
     computed: {
         color() {
-            return this.$props.settings.color
+            return this.$props.settings.color || 'grey';
         }
     }
 }
