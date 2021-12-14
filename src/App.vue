@@ -1,17 +1,36 @@
 <template>
 <v-app>
-    <Tickers />
+  <v-tabs
+        fixed-tabs
+        background-color="indigo"
+        dark
+    >
+      <v-tab>Tickers</v-tab>
+      <v-tab>Kotomon</v-tab>
+     
+      <v-tab-item>
+        <Tickers />
+      </v-tab-item>
+
+      <v-tab-item>
+        <Kotomon />
+      </v-tab-item>
+
+    </v-tabs>
+
 </v-app>
 </template>
 
 <script>
 // import Chart from './components/Chart.vue'
 import Tickers from './components/Tickers.vue'
+import Kotomon from './components/Kotomon.vue'
 
 export default {
   name: 'App',
   components: {
-    Tickers
+    Tickers,
+    Kotomon
   }
 }
 </script>
