@@ -1,13 +1,17 @@
 <template>
 <v-app>
-  <v-tabs
-        fixed-tabs
+  <div>
+    <v-tabs v-model="tab"
         background-color="indigo"
         dark
     >
       <v-tab>Tickers</v-tab>
       <v-tab>Kotomon</v-tab>
-     
+    
+    </v-tabs>
+
+     <v-tabs-items v-model="tab" touchless>
+
       <v-tab-item>
         <Tickers />
       </v-tab-item>
@@ -15,19 +19,23 @@
       <v-tab-item>
         <Kotomon />
       </v-tab-item>
+ 
+     </v-tabs-items>
 
-    </v-tabs>
-
+  </div>
 </v-app>
 </template>
 
 <script>
 // import Chart from './components/Chart.vue'
 import Tickers from './components/Tickers.vue'
-import Kotomon from './components/Kotomon.vue'
+import Kotomon from './components/Kotomon/Kotomon.vue'
 
 export default {
   name: 'App',
+  data: () => ({
+    tab: null
+  }),
   components: {
     Tickers,
     Kotomon

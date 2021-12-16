@@ -6,7 +6,7 @@ import vuetify from './plugins/vuetify'
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: 'http://localhost:3005'
+  connection: 'http://192.168.1.10:3005'
   /*,
   vuex: {
       store,
