@@ -93,7 +93,7 @@ export default {
               i.locked = parseFloat(i.assetInfo.locked);
               i.total = i.free + i.locked;
               i.totalUSD = parseFloat(i.total * i.currentPrice).toFixed(2);
-              let percent = ( (i.myAvgPrice / i.currentPrice)*100 - 100 )*-1;
+              let percent = -100*(1 - i.currentPrice / i.myAvgPrice);
               if (!i.myAvgPrice) { percent = 0; }
               i.myAvgPrice = i.myAvgPrice.toPrecision(5);
               i.gainPercent = percent.toFixed(2);

@@ -78,6 +78,26 @@ export default {
             ctx.fillRect(fromX,fromY,width,height)
             
         },
+        drawEntryBox(layout,ctx,candle,item) {
+
+            ctx.lineWidth = 1.5
+            ctx.globalAlpha = item.alpha || 0.3;
+            ctx.strokeStyle = 'black'
+
+            const fromX = layout.t2screen(candle.openTime)
+            const candleWidth = layout.t2screen(candle.closeTime) - layout.t2screen(candle.openTime);
+            const widthX = 10 * candleWidth;
+            const middleY = layout.$2screen(candle.close);
+            const takeProfitY = layout.$2screen(item.tp);
+            const stopLossY = layout.$2screen(item.sl);
+
+            ctx.fillStyle = 'red';
+            ctx.fillRect(fromX,stopLossY,widthX,(middleY-stopLossY));
+
+            ctx.fillStyle = 'green';
+            ctx.fillRect(fromX,middleY,widthX,(takeProfitY-middleY));
+            
+        },
         filterItems(items) {
             return items.filter( i => this.filterSources.includes(i.src) )
         },
@@ -91,7 +111,11 @@ export default {
 
                 this.drawCircles(layout,ctx,items.filter( i => i.type === 'circle'));
                 this.drawLabels(layout,ctx,candle,items.filter( i => i.type === 'label'));
-                // this.drawHorizontalBars(layout,ctx,candle,items.filter( i => i.type === 'hbar'))
+                
+                let entryItem = items.find( i => i.type == 'entry' );
+                if (entryItem) {
+                    this.drawEntryBox(layout,ctx,candle,entryItem);
+                }
             }
 
 

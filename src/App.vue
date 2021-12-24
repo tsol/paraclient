@@ -6,6 +6,7 @@
         dark
     >
       <v-tab>Tickers</v-tab>
+      <v-tab>Orders</v-tab>
       <v-tab>Kotomon</v-tab>
     
     </v-tabs>
@@ -14,6 +15,11 @@
 
       <v-tab-item>
         <Tickers />
+      </v-tab-item>
+
+
+      <v-tab-item>
+        <Orders />
       </v-tab-item>
 
       <v-tab-item>
@@ -30,6 +36,7 @@
 // import Chart from './components/Chart.vue'
 import Tickers from './components/Tickers.vue'
 import Kotomon from './components/Kotomon/Kotomon.vue'
+import Orders from './components/Orders.vue';
 
 export default {
   name: 'App',
@@ -38,7 +45,8 @@ export default {
   }),
   components: {
     Tickers,
-    Kotomon
+    Kotomon,
+    Orders
   }
 }
 </script>

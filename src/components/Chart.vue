@@ -45,7 +45,7 @@ export default {
   components: { TradingVue },
   props: ['tickerId','candles','flags'],
   data: () => ({
-      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom','hills'],
+      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom','hills','entries'],
       filteredSources: ['extremum'],
       overlays: [ValueBars, Flags, ATR],
       colors: {
@@ -93,12 +93,13 @@ export default {
           }
         ],
         "offchart": [
+          /*
           {
             "name": "ATR 14",
             "type": "ATR",
             "data": this.filterDebug('atr14'),
             "settings": { }
-          },
+          },*/
         ]
         }
       },
