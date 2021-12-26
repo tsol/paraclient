@@ -46,7 +46,7 @@
 
         <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length">
-            <Chart :tickerId="item.id" :flags="item.flags" :candles="item.chart.candles" />
+            <Chart :tickerId="item.id" :toggleOn="['extremum']" />
             </td>
         </template>
 
@@ -70,10 +70,7 @@ export default {
         { text: 'id', value: 'id', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true },
         { text: 'Time', value: 'timeframe', groupable: false },
-        { text: 'Limit', value: 'limit', groupable: false },
-        { text: 'Ready', value: 'batchLoaded', groupable: false },
-        { text: 'Flags', value: 'flags', groupable: false },
-        
+        { text: 'Limit', value: 'limit', groupable: false }      
     ],
   }),
   methods: {
@@ -91,29 +88,8 @@ export default {
     connect() { this.isConnected = true; },
     disconnect() { this.isConnected = false; },
     tickers(data) {
-        console.log('TICKERS RECEIVED:');
-        console.log(JSON.stringify(data));
-        
-        data.forEach( (t) => {
-            if (! t.chart) {
-                let exists = this.tickers.find( e => e.id === t.id );
-                if (exists && exists.chart) {
-                    t.chart = exists.chart;
-                }
-                else {
-                    t.chart = { candles: [] }
-                }
-            }       
-        });
-
         this.tickers = data;
- 
     },
-    chart(data) {
-        this.tickers.find( t => t.id === data.id).chart.candles = data.candles;
-        console.log('CHART_RECEIVED:')
-        console.log(this.tickers);
-    }
   },
   mounted() {
     this.reloadTickers();

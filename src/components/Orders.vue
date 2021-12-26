@@ -27,14 +27,27 @@
       show-select
       :loading="(orders.length === 0)"
       :headers="headers"
-      :items="orders"
+      :items="formatted_orders"
       item-key="id"
       :items-per-page="-1"
       show-group-by
       class="elevation-1"
       :search="search"
       @current-items="gotFiltered"
+      show-expand
+      :expanded.sync="expanded"
+      @item-expanded="rowExpandEvent"
+
     >
+    <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+            <Chart 
+              :tickerId="item.symbol+'-'+item.timeframe" 
+              :moveTo="item.time"
+              :toggleOn="['entries',item.strategy]"
+             />
+            </td>
+    </template>
 
     <template v-slot:item.gain="{ item }">
         <div class="green--text" v-if="item.gain > 0">
@@ -46,7 +59,7 @@
     </template>
 
     <template v-slot:item.time="{ item }">
-        <div>
+        <div :id="item.id">
         {{ dateFromUnix(item.time) }}
         </div>
     </template>
@@ -56,30 +69,19 @@
 </template>
 
 <script>
+import Chart from './Chart.vue';
 
 
 export default {
-  components: { },
+  components: { Chart },
   data: () => ({
     orders: [],
     search: '',
     selected: [],
     filteredItems: [],
-    /*
-    id: orderId,
-            time: time,
-            symbol: atCandle.symbol,
-            type: 'buy'
-            timeframe: atCandle.timeframe,
-            strategy: strategyName,
-            entryPrice: atCandle.close,
-            takeProfit: takeProfit,
-            stopLoss: stopLoss
-            active: true,
-            gain: 0
-            qty: 11
- */
- headers: [
+    expanded: [],
+    headers: [
+        { text: 'EXP', value: 'data-table-expand', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true },
         { text: 'TF', value: 'timeframe', groupable: true },
         { text: 'Strategy', value: 'strategy', groupable: true },
@@ -101,6 +103,17 @@ export default {
     },
     reload() {
           this.$socket.emit('list_orders','1');
+    },
+    rowExpandEvent(event) {
+      if (event.value) {
+        let item = event.item;
+        this.$socket.emit('get_chart',item.id);
+        this.$nextTick( () =>
+          this.$vuetify.goTo('#'+item.id, { duration: 500, offset: 50 })
+          //this.$vuetify.goTo('.v-data-table__expanded__row')
+        );
+        
+      }
     },
     dateFromUnix(unixtime) {
         let od = new Date(unixtime);
@@ -129,23 +142,16 @@ export default {
 
       sumSelectedGain() {
          return this.filteredItems.reduce( (p,c) => p + c.gain, 0).toFixed(2);
-      }
+      },
 
-/*
-      formatted_assets() {
-          return this.assets.map( i => {
-              i.free = parseFloat(i.assetInfo.free);
-              i.locked = parseFloat(i.assetInfo.locked);
-              i.total = i.free + i.locked;
-              i.totalUSD = parseFloat(i.total * i.currentPrice).toFixed(2);
-              let percent = ( (i.myAvgPrice / i.currentPrice)*100 - 100 )*-1;
-              if (!i.myAvgPrice) { percent = 0; }
-              i.myAvgPrice = i.myAvgPrice.toPrecision(5);
-              i.gainPercent = percent.toFixed(2);
+      formatted_orders() {
+          return this.orders.map( i => {
+              i.qty = i.qty.toPrecision(5);
+              i.takeProfit = i.takeProfit.toPrecision(5);
+              i.stopLoss = i.stopLoss.toPrecision(5);
               return i;
           });
       }
-*/
   }
 }
 </script>

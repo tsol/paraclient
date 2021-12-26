@@ -17,6 +17,7 @@
     </v-row>
 
     <trading-vue
+      ref="tradingVue"
       :width="this.width"
       :height="this.height"
       :titleTxt="this.tickerId" 
@@ -29,32 +30,37 @@
       >
       </trading-vue>
  ]
-    <div> {{ flags }} </div>
+    <div> {{ flagsList }} </div>
   </div>
 </template>
 
 
 <script>
 import TradingVue from 'trading-vue-js'
-import Flags from './overlays/Flags'
+import CandleDebug from './overlays/CandleDebug.vue'
 import ValueBars from './overlays/ValueBars.vue'
 import ATR from './overlays/ATR.vue'
 
-
 export default {
   components: { TradingVue },
-  props: ['tickerId','candles','flags'],
+  props: {
+      tickerId: String,
+      moveTo: null,
+      toggleOn: Array
+  }, 
   data: () => ({
+      candles: [],
+      flags: {},
       debugSources: ['extremum','hl_trend','candlepatterns','dblbottom','hills','entries'],
-      filteredSources: ['extremum'],
-      overlays: [ValueBars, Flags, ATR],
+      filteredSources: [],
+      overlays: [ValueBars, CandleDebug, ATR],
       colors: {
         colorBack: '#fff',
         colorGrid: '#eee',
         colorText: '#333',
       },
       width: window.innerWidth * 0.8,
-      height: window.innerHeight * 0.8,
+      height: window.innerHeight * 0.6,
   }),
   computed: {
       chartData() {
@@ -66,9 +72,9 @@ export default {
         },
         "onchart": [
           {
-            "name": "Flags 10",
-            "type": "Flags",
-            "data": this.flagsData,
+            "name": "CandleDebug 10",
+            "type": "CandleDebug",
+            "data": this.candleDebugData,
             "settings": { 
               filterSources: this.filteredSources
             }
@@ -77,13 +83,13 @@ export default {
             "name": "ValueBars CUR",
             "type": "ValueBars",
             "data": [],
-            "settings": { bars: this.flags.vlevels }
+            "settings": { bars: this.vlevelsData }
           },
           {
             "name": "ValueBars HIGH",
             "type": "ValueBars",
             "data": [],
-            "settings": { bars: this.flags.vlevels_high, color: 'yellow' }
+            "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
           {
             "name": "MAC20",
@@ -108,19 +114,32 @@ export default {
           (a) => [ a.openTime, a.open, a.high, a.low, a.close, a.volume ] 
         )
       },
-      flagsData() {
+      candleDebugData() {
         return this.candles.map(
           (candle) => {
             if (candle.visualDebug.length > 0) {
               return [candle.openTime, candle];
             }
         });        
+      },
+      vlevelsData()
+      {
+        if (this.flags.vlevels) { return this.flags.vlevels; }
+        return [];
+      },
+      vlevelsHighData() {
+        if (this.flags.vlevels_high) { return this.flags.vlevels_high; }
+        return [];        
+      },
+      flagsList()
+      {
+        return Object.keys(this.flags).join(', ');
       }
   },
   methods: {
     onResize() {
       this.width = window.innerWidth * 0.8
-      this.height = window.innerHeight * 0.8
+      this.height = window.innerHeight * 0.6
     },
     filterDebug(name) {
       let data = [];
@@ -137,8 +156,32 @@ export default {
       this.$socket.emit('get_chart', this.tickerId)
     }
   },
+  sockets: {
+    chart(data) {
+      if (data.id !== this.tickerId) {
+        return;
+      }
+      this.candles = data.candles;
+      this.flags = data.flags;
+      if (! this.flags.vlevels_high ) {
+        this.flags.vlevels_high = [];
+      }
+
+      if (this.moveTo) {
+        this.$nextTick(() =>
+          this.$refs.tradingVue.goto(this.moveTo)
+        )
+      }
+
+    }
+  },
   mounted() {
         window.addEventListener('resize', this.onResize)
+
+        if (this.toggleOn && this.toggleOn.length > 0) {
+          this.filteredSources = this.toggleOn;
+        }
+
   },
   beforeDestroy() {
         window.removeEventListener('resize', this.onResize)

@@ -3,7 +3,7 @@
 import { Overlay } from 'trading-vue-js'
 
 export default {
-    name: 'Flags',
+    name: 'CandleDebug',
     mixins: [Overlay],
     methods: {
         legend() { return [] },
@@ -120,13 +120,13 @@ export default {
 
 
         },
-        use_for() { return ['Flags'] },
+        use_for() { return ['CandleDebug'] },
         data_colors() { return [this.color] },
         meta_info() {
             return {
                 author:     'Igor Kravets',
                 version:    '1.0.0',
-                desc:       'para trading bot flags view',
+                desc:       'para trading bot CandleDebug view',
                 contact:    '',
                 github:     ''
             }
