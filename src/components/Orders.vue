@@ -13,15 +13,8 @@
  
        <v-spacer></v-spacer>
  
-        <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-        ></v-text-field>
     </v-card-title>
-
+    
     <v-data-table
       v-model="selected"
       show-select
@@ -39,6 +32,44 @@
       @item-expanded="rowExpandEvent"
 
     >
+
+      <template v-slot:top>
+        <v-row>
+          <v-col cols="12" sm="2" md="2">
+            <InputDate
+              defaultValue="" 
+              id="dateFrom"
+              label="С даты"
+              @dateSelected="(e) => filterSetValue(e.id, e.value)"
+            /> 
+          </v-col>
+
+          <v-col cols="12" sm="2" md="2">
+            <InputDate
+              defaultValue="" 
+              id="dateTo"
+              label="По дату"
+              @dateSelected="(e) => filterSetValue(e.id, e.value)"
+            /> 
+          </v-col>
+
+          <v-col cols="12" sm="2" md="2">
+ 
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+
+          </v-col>
+
+        </v-row>
+
+      </template>
+
+
     <template v-slot:expanded-item="{ headers, item }">
             <td :colspan="headers.length">
             <Chart 
@@ -49,7 +80,7 @@
             </td>
     </template>
 
-    <template v-slot:item.gain="{ item }">
+    <template v-slot:[`item.gain`]="{ item }">
         <div class="green--text" v-if="item.gain > 0">
         {{ item.gain }}
         </div>
@@ -58,7 +89,7 @@
         </div>
     </template>
 
-    <template v-slot:item.time="{ item }">
+    <template v-slot:[`item.time`]="{ item }">
         <div :id="item.id">
         {{ dateFromUnix(item.time) }}
         </div>
@@ -70,34 +101,27 @@
 
 <script>
 import Chart from './Chart.vue';
-
+import InputDate from './helpers/InputDate.vue'
 
 export default {
-  components: { Chart },
+  components: { Chart, InputDate },
   data: () => ({
     orders: [],
     search: '',
     selected: [],
     filteredItems: [],
     expanded: [],
-    headers: [
-        { text: 'EXP', value: 'data-table-expand', groupable: false },
-        { text: 'Symbol', value: 'symbol', groupable: true },
-        { text: 'TF', value: 'timeframe', groupable: true },
-        { text: 'Strategy', value: 'strategy', groupable: true },
-        { text: 'Date Time', value: 'time', groupable: true },
-        { text: 'BUY/SELL', value: 'type', groupable: false },
-        { text: 'Qty', value: 'qty', groupable: false },
-        { text: 'Entry Price', value: 'entryPrice', groupable: false },
-        { text: 'Take Profit', value: 'takeProfit', groupable: false },
-        { text: 'Stop Loss', value: 'stopLoss', groupable: false },
-        { text: 'Close Price', value: 'closePrice', groupable: false },
-        { text: 'Active', value: 'active', groupable: false },
-        { text: 'Gain USD', value: 'gain', groupable: false }
-    ],
-
+    filter: {
+       dateFrom: null,
+       dateTo: null
+    }
   }),
   methods: {
+    filterSetValue(id, value) {
+      console.log('filterSetValue '+id+' = '+value);
+      this.filter[ id ] = value;
+      console.log(this.filter);
+    },
     gotFiltered(e){
       this.filteredItems = e;
     },
@@ -118,8 +142,22 @@ export default {
     dateFromUnix(unixtime) {
         let od = new Date(unixtime);
         return od.toLocaleDateString('ru-RU')+' '+od.toLocaleTimeString('ru-RU');
+    },
+    dateToUnix(dateString) {
+        if (! dateString ) { return null; }
+        const date = new Date(dateString);
+        return date.getTime();
+    },
+    filterOrderDate(timestamp) {
+      if (this.filter.dateFrom && (timestamp < this.filterDateFromTimestamp) ) {
+        return false;
+      }
+      if (this.filter.dateTo && (timestamp > this.filterDateToTimestamp) ) {
+        return false;
+      }
+      return true;
     }
-  },
+},
   sockets: {
     orders(data) {  
         this.orders = data;
@@ -128,7 +166,31 @@ export default {
   mounted() {
   },
   computed: {
-
+      headers() {
+        return [      
+        { text: 'EXP', value: 'data-table-expand', groupable: false },
+        { text: 'Symbol', value: 'symbol', groupable: true },
+        { text: 'TF', value: 'timeframe', groupable: true },
+        { text: 'Strategy', value: 'strategy', groupable: true },
+        { text: 'Date Time', value: 'time', groupable: false,
+              filter: this.filterOrderDate
+        },
+        { text: 'BUY/SELL', value: 'type', groupable: false },
+        { text: 'Qty', value: 'qty', groupable: false },
+        { text: 'Entry Price', value: 'entryPrice', groupable: false },
+        { text: 'Take Profit', value: 'takeProfit', groupable: false },
+        { text: 'Stop Loss', value: 'stopLoss', groupable: false },
+        { text: 'Close Price', value: 'closePrice', groupable: false },
+        { text: 'Active', value: 'active', groupable: false },
+        { text: 'Gain USD', value: 'gain', groupable: false }
+        ];
+      },
+      filterDateFromTimestamp() {
+        return this.dateToUnix(this.filter.dateFrom);
+      },
+      filterDateToTimestamp() {
+        return this.dateToUnix(this.filter.dateTo);
+      },
       winLooseRatio()
       {
         let win = this.filteredItems.reduce( (p,c) => p + ( c.gain > 0 ? 1 : 0) , 0);

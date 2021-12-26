@@ -37,7 +37,7 @@
             </td>
         </template>
 
-    <template v-slot:item.gainPercent="{ item }">
+    <template v-slot:[`item.gainPercent`]="{ item }">
         <div class="green--text" v-if="item.gainPercent > 0">
         {{ item.gainPercent }}
         </div>
