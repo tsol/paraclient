@@ -8,24 +8,18 @@
       <v-tab>Tickers</v-tab>
       <v-tab>Orders</v-tab>
       <v-tab>Kotomon</v-tab>
-    
     </v-tabs>
 
      <v-tabs-items v-model="tab" touchless>
-
       <v-tab-item>
         <Tickers />
       </v-tab-item>
-
-
       <v-tab-item>
         <Orders />
       </v-tab-item>
-
       <v-tab-item>
         <Kotomon />
       </v-tab-item>
- 
      </v-tabs-items>
 
   </div>
