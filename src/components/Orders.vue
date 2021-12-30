@@ -14,7 +14,7 @@
        <v-spacer></v-spacer>
  
     </v-card-title>
-    
+
     <v-data-table
       v-model="selected"
       show-select
@@ -34,6 +34,7 @@
     >
 
       <template v-slot:top>
+        
         <v-row>
           <v-col cols="12" sm="2" md="2">
             <InputDate
@@ -66,7 +67,7 @@
           </v-col>
 
         </v-row>
-
+        
       </template>
 
 
@@ -186,10 +187,10 @@ export default {
         ];
       },
       filterDateFromTimestamp() {
-        return this.dateToUnix(this.filter.dateFrom);
+        return this.dateToUnix(this.filter.dateFrom+' 00:00:00');
       },
       filterDateToTimestamp() {
-        return this.dateToUnix(this.filter.dateTo);
+        return this.dateToUnix(this.filter.dateTo+' 23:59:59');
       },
       winLooseRatio()
       {

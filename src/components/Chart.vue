@@ -163,15 +163,20 @@ export default {
       }
       this.candles = data.candles;
       this.flags = data.flags;
+
       if (! this.flags.vlevels_high ) {
         this.flags.vlevels_high = [];
       }
 
-      if (this.moveTo) {
-        this.$nextTick(() =>
-          this.$refs.tradingVue.goto(this.moveTo)
-        )
-      }
+      console.log('CHART RECEIVED');
+
+      this.$nextTick(() => {
+        //this.$refs.tradingVue.resetChart()
+        if (this.moveTo) {
+            this.$refs.tradingVue.goto(this.moveTo)
+        }
+      });
+
 
     }
   },
