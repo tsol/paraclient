@@ -13,12 +13,12 @@
         </v-btn>
 
         <v-btn color="green" @click="restartTickers(true)">
-            <v-icon>mdi-reload</v-icon>
+            <v-icon>mdi-play</v-icon>
         </v-btn>
 
         <v-spacer></v-spacer>
         
-        <div> gain: <b>{{ this.sumSelectedGain }}</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
+        <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
  
        <v-spacer></v-spacer>
  
@@ -63,8 +63,27 @@
             /> 
           </v-col>
 
-          <v-col cols="12" sm="2" md="2">
- 
+          <v-col cols="12" sm="2" md="2"> 
+            <v-text-field
+              v-model="filter.symbol"
+              prepend-icon="mdi-currency-usd"
+              label="Symbol"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="2" md="2"> 
+            <v-text-field
+              v-model="filter.timeframe"
+              prepend-icon="mdi-clock"
+              label="Timeframe"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-col>
+
+          <v-col cols="12" sm="2" md="2"> 
             <v-text-field
               v-model="filter.strategy"
               prepend-icon="mdi-robot"
@@ -72,7 +91,6 @@
               single-line
               hide-details
             ></v-text-field>
-
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
@@ -137,7 +155,9 @@ export default {
     filter: {
        dateFrom: null,
        dateTo: null,
-       strategy: null
+       strategy: null,
+       timeframe: null,
+       symbol: null
     }
   }),
   methods: {
@@ -195,12 +215,20 @@ export default {
       headers() {
         return [      
         { text: 'EXP', value: 'data-table-expand', groupable: false },
-        { text: 'Symbol', value: 'symbol', groupable: true },
-        { text: 'TF', value: 'timeframe', groupable: true },
+        { text: 'Symbol', value: 'symbol', groupable: true,
+              filter: (v) => { 
+                  if (!this.filter.symbol) return true;
+                  return (v.includes(this.filter.symbol));
+              }},
+        { text: 'TF', value: 'timeframe', groupable: true,
+              filter: (v) => { 
+                  if (!this.filter.timeframe) return true;
+                  return (v.includes(this.filter.timeframe));
+              }},
         { text: 'Strategy', value: 'strategy', groupable: true,
               filter: (v) => { 
                   if (!this.filter.strategy) return true;
-                  return (v === this.filter.strategy);
+                  return (v.includes(this.filter.strategy));
               } },
         { text: 'Date Time', value: 'time', groupable: false,
               filter: this.filterOrderDate
@@ -220,6 +248,11 @@ export default {
       },
       filterDateToTimestamp() {
         return this.dateToUnix(this.filter.dateTo+' 23:59:59');
+      },
+      countSymbols() {
+        let uniq = {};
+        this.filteredItems.forEach( fi => uniq[ fi.symbol ] = 1 );
+        return Object.keys(uniq).length;
       },
       winLooseRatio()
       {
