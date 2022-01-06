@@ -50,6 +50,15 @@
             </td>
         </template>
 
+        <template v-slot:[`item.firstTimestamp`]="{ item }">
+          {{ dateFromUnix(item.firstTimestamp) }}
+        </template>
+
+        <template v-slot:[`item.lastTimestamp`]="{ item }">
+          {{ dateFromUnix(item.lastTimestamp) }}
+        </template>
+
+
     </v-data-table> 
 </v-card>
 </template>
@@ -70,17 +79,26 @@ export default {
         { text: 'id', value: 'id', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true },
         { text: 'Time', value: 'timeframe', groupable: false },
-        { text: 'Limit', value: 'limit', groupable: false }      
-    ],
+        { text: 'Limit', value: 'limit', groupable: false },      
+        { text: 'Live', value: 'isLive', groupable: false },      
+        { text: 'From', value: 'firstTimestamp', groupable: false },      
+        { text: 'To', value: 'lastTimestamp', groupable: false },      
+
+],
   }),
+
   methods: {
+    dateFromUnix(unixtime) {
+        let od = new Date(unixtime);
+        return od.toLocaleDateString('ru-RU')+' '+od.toLocaleTimeString('ru-RU');
+    },
     reloadTickers() {
         this.$socket.emit('list_tickers', '')
     },
     rowExpandEvent(event) {
       if (event.value) {
         let item = event.item;
-        this.$socket.emit('get_chart',item.id);
+        this.$socket.emit('get_chart',{ tickerId: item.id });
       }
     },
   },

@@ -30,7 +30,7 @@
       >
       </trading-vue>
  ]
-    <div> {{ flagsList }} </div>
+    <div> Candles: {{ candles.length }}, Flags: {{ flagsList }} </div>
   </div>
 </template>
 
@@ -46,12 +46,13 @@ export default {
   props: {
       tickerId: String,
       moveTo: null,
-      toggleOn: Array
+      toggleOn: Array,
+      overrideFlags: null
   }, 
   data: () => ({
       candles: [],
       flags: {},
-      debugSources: ['extremum','hl_trend','candlepatterns','dblbottom','hills','entries'],
+      debugSources: ['extremum','vlevels','touchma','hl_trend','candlepatterns','dblbottom','hills','entries'],
       filteredSources: [],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
@@ -63,6 +64,14 @@ export default {
       height: window.innerHeight * 0.6,
   }),
   computed: {
+    resultFlags() {
+      if (this.overrideFlags) { 
+        console.log('OVERRIDE FLAGS');
+        console.log(this.overrideFlags);
+        return this.overrideFlags;
+      }
+      return this.flags;
+    },
       chartData() {
         return {  
         "chart": {
@@ -124,16 +133,16 @@ export default {
       },
       vlevelsData()
       {
-        if (this.flags.vlevels) { return this.flags.vlevels; }
+        if (this.resultFlags.vlevels) { return this.resultFlags.vlevels; }
         return [];
       },
       vlevelsHighData() {
-        if (this.flags.vlevels_high) { return this.flags.vlevels_high; }
+        if (this.resultFlags.vlevels_high) { return this.resultFlags.vlevels_high; }
         return [];        
       },
       flagsList()
       {
-        return Object.keys(this.flags).join(', ');
+        return Object.keys(this.resultFlags).join(', ');
       }
   },
   methods: {
@@ -153,7 +162,7 @@ export default {
       return data;
     },
     refresh() {
-      this.$socket.emit('get_chart', this.tickerId)
+      this.$socket.emit('get_chart', { tickerId: this.tickerId } )
     }
   },
   sockets: {
@@ -173,8 +182,17 @@ export default {
       this.$nextTick(() => {
         //this.$refs.tradingVue.resetChart()
         if (this.moveTo) {
-            this.$refs.tradingVue.goto(this.moveTo)
+            if (this.candles && this.candles[0] && this.candles[0].openTime <= this.moveTo) {
+              console.log('chart moved to target '+this.moveTo);
+              const [start, finish] = this.$refs.tradingVue.getRange();
+              this.$refs.tradingVue.goto( this.moveTo + Math.floor((finish-start)/2)  );
+            }
+            else {
+              alert('Target candle already expired, try later date');
+            }
+
         }
+        
       });
 
 

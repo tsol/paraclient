@@ -7,6 +7,15 @@
             <v-icon>mdi-reload</v-icon>
         </v-btn>
 
+
+        <v-btn color="blue" @click="restartTickers(false)">
+            <v-icon>mdi-reload</v-icon>
+        </v-btn>
+
+        <v-btn color="green" @click="restartTickers(true)">
+            <v-icon>mdi-reload</v-icon>
+        </v-btn>
+
         <v-spacer></v-spacer>
         
         <div> gain: <b>{{ this.sumSelectedGain }}</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
@@ -57,6 +66,18 @@
           <v-col cols="12" sm="2" md="2">
  
             <v-text-field
+              v-model="filter.strategy"
+              prepend-icon="mdi-robot"
+              label="Strategy"
+              single-line
+              hide-details
+            ></v-text-field>
+
+          </v-col>
+
+          <v-col cols="12" sm="2" md="2">
+ 
+            <v-text-field
               v-model="search"
               append-icon="mdi-magnify"
               label="Search"
@@ -77,6 +98,7 @@
               :tickerId="item.symbol+'-'+item.timeframe" 
               :moveTo="item.time"
               :toggleOn="['entries',item.strategy]"
+              :overrideFlags = item.flags
              />
             </td>
     </template>
@@ -114,7 +136,8 @@ export default {
     expanded: [],
     filter: {
        dateFrom: null,
-       dateTo: null
+       dateTo: null,
+       strategy: null
     }
   }),
   methods: {
@@ -129,13 +152,15 @@ export default {
     reload() {
           this.$socket.emit('list_orders','1');
     },
+    restartTickers(runLive) {
+          this.$socket.emit('restart_all',{ runLive: runLive });
+    },
     rowExpandEvent(event) {
       if (event.value) {
         let item = event.item;
-        this.$socket.emit('get_chart',item.id);
+        this.$socket.emit('get_chart',{ tickerId: item.id, timestamp: item.time });
         this.$nextTick( () =>
           this.$vuetify.goTo('#'+item.id, { duration: 500, offset: 50 })
-          //this.$vuetify.goTo('.v-data-table__expanded__row')
         );
         
       }
@@ -172,7 +197,11 @@ export default {
         { text: 'EXP', value: 'data-table-expand', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true },
         { text: 'TF', value: 'timeframe', groupable: true },
-        { text: 'Strategy', value: 'strategy', groupable: true },
+        { text: 'Strategy', value: 'strategy', groupable: true,
+              filter: (v) => { 
+                  if (!this.filter.strategy) return true;
+                  return (v === this.filter.strategy);
+              } },
         { text: 'Date Time', value: 'time', groupable: false,
               filter: this.filterOrderDate
         },
