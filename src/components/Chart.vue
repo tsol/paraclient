@@ -29,7 +29,6 @@
       :color-text="colors.colorText"
       >
       </trading-vue>
- ]
     <div> Candles: {{ candles.length }}, Flags: {{ flagsList }} </div>
   </div>
 </template>
@@ -66,8 +65,6 @@ export default {
   computed: {
     resultFlags() {
       if (this.overrideFlags) { 
-        console.log('OVERRIDE FLAGS');
-        console.log(this.overrideFlags);
         return this.overrideFlags;
       }
       return this.flags;
@@ -105,6 +102,18 @@ export default {
             "type": "SMA",
             "data": this.filterDebug('mac20'),
             "settings": { color: 'blue' }
+          },
+          {
+            "name": "MAC50",
+            "type": "SMA",
+            "data": this.filterDebug('mac50'),
+            "settings": { color: 'green' }
+          },
+                    {
+            "name": "MAC100",
+            "type": "SMA",
+            "data": this.filterDebug('mac100'),
+            "settings": { color: 'black' }
           }
         ],
         "offchart": [
@@ -116,7 +125,7 @@ export default {
             "settings": { }
           },*/
         ]
-        }
+        };
       },
       ohlcv() {
         return this.candles.map(
@@ -124,12 +133,13 @@ export default {
         )
       },
       candleDebugData() {
-        return this.candles.map(
-          (candle) => {
+        let debugData = [];
+        this.candles.forEach( (candle) => {
             if (candle.visualDebug.length > 0) {
-              return [candle.openTime, candle];
+              debugData.push([candle.openTime, candle]);
             }
-        });        
+        });
+        return debugData;
       },
       vlevelsData()
       {
@@ -177,13 +187,13 @@ export default {
         this.flags.vlevels_high = [];
       }
 
-      console.log('CHART RECEIVED');
+      console.log('CHART: received');
 
       this.$nextTick(() => {
         //this.$refs.tradingVue.resetChart()
         if (this.moveTo) {
             if (this.candles && this.candles[0] && this.candles[0].openTime <= this.moveTo) {
-              console.log('chart moved to target '+this.moveTo);
+              console.log('CHART: moved to target '+this.moveTo);
               const [start, finish] = this.$refs.tradingVue.getRange();
               this.$refs.tradingVue.goto( this.moveTo + Math.floor((finish-start)/2)  );
             }
