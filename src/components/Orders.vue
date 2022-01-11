@@ -223,7 +223,7 @@ export default {
         { text: 'TF', value: 'timeframe', groupable: true,
               filter: (v) => { 
                   if (!this.filter.timeframe) return true;
-                  return (v.includes(this.filter.timeframe));
+                  return (v === this.filter.timeframe);
               }},
         { text: 'Strategy', value: 'strategy', groupable: true,
               filter: (v) => { 

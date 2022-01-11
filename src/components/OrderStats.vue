@@ -98,6 +98,10 @@
       <red-green :value="item.gain" :greenAbove="0" />
     </template>
 
+    <template v-slot:[`item.ratio`]="{ item }">
+      <red-green :value="item.ratio" :greenAbove="49.99" />
+    </template>
+
     <template v-slot:[`item.entries`]="{ item }">
       <div class="entries" >
       {{ item['entries'] }}
@@ -109,7 +113,7 @@
     </template>
 
     <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_ratio`]="{ item }">
-      <red-green :key="index" :value="item[tf+'_ratio']" :greenAbove="50" />
+      <red-green :key="index" :value="item[tf+'_ratio']" :greenAbove="49.99" />
     </template>
 
     <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_entries`]="{ item }">

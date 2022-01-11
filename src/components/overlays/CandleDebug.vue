@@ -81,7 +81,7 @@ export default {
         drawEntryBox(layout,ctx,candle,item) {
 
             ctx.lineWidth = 1.5
-            ctx.globalAlpha = item.alpha || 0.3;
+            ctx.globalAlpha = item.alpha || 0.1;
             ctx.strokeStyle = 'black'
 
             const fromX = layout.t2screen(candle.openTime)

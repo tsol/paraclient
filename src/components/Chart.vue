@@ -51,7 +51,7 @@ export default {
   data: () => ({
       candles: [],
       flags: {},
-      debugSources: ['extremum','vlevels','touchma','hl_trend','candlepatterns','dblbottom','hills','entries'],
+      debugSources: ['extremum','mac20','hl_trend','hills','vlevels','cdlpatts','macross','touchma','dblbottom','entries'],
       filteredSources: [],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
