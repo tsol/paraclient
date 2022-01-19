@@ -235,12 +235,16 @@ export default {
         },
         { text: 'BUY/SELL', value: 'type', groupable: false },
         { text: 'Qty', value: 'qty', groupable: false },
+        /*
         { text: 'Entry Price', value: 'entryPrice', groupable: false },
         { text: 'Take Profit', value: 'takeProfit', groupable: false },
         { text: 'Stop Loss', value: 'stopLoss', groupable: false },
         { text: 'Close Price', value: 'closePrice', groupable: false },
         { text: 'Active', value: 'active', groupable: false },
+        */
         { text: 'Gain USD', value: 'gain', groupable: false },
+        { text: 'Reached', value: 'reachedPercent', groupable: false },
+        { text: 'Result', value: 'result', groupable: false },
         { text: 'Comment', value: 'comment', groupable: false }
         ];
       },

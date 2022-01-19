@@ -124,6 +124,12 @@ export default {
             "data": this.filterDebug('atr14'),
             "settings": { }
           },*/
+          {
+            "name": "RSI 14",
+            "type": "Range",
+            "data": this.filterDebug('rsi14'),
+            "settings": { }
+          },
         ]
         };
       },
