@@ -51,7 +51,9 @@ export default {
   data: () => ({
       candles: [],
       flags: {},
-      debugSources: ['extremum','mac20','hl_trend','hills','vlevels','cdlpatts','macross','touchma','dblbottom','entries'],
+      debugSources: 
+        ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
+        'cma3buy','cma3sell','touchma','dblbottom','dbltop','crosswma','entries'],
       filteredSources: [],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
@@ -98,22 +100,22 @@ export default {
             "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
           {
-            "name": "MAC20",
+            "name": "RMAC21",
             "type": "SMA",
-            "data": this.filterDebug('mac20'),
+            "data": this.filterDebug('rmac21'),
             "settings": { color: 'blue' }
           },
           {
-            "name": "MAC50",
+            "name": "RMAC50",
             "type": "SMA",
-            "data": this.filterDebug('mac50'),
+            "data": this.filterDebug('rmac50'),
             "settings": { color: 'green' }
           },
-                    {
-            "name": "MAC100",
+          {
+            "name": "RMAC200",
             "type": "SMA",
-            "data": this.filterDebug('mac100'),
-            "settings": { color: 'black' }
+            "data": this.filterDebug('rmac200'),
+            "settings": { color: 'red' }
           }
         ],
         "offchart": [

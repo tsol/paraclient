@@ -2,19 +2,47 @@
 <template>
 <v-card>
     <v-card-title>
-        
-        <v-btn @click="reload()">
-            <v-icon>mdi-reload</v-icon>
-        </v-btn>
+            
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn 
+              @click="reload()"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-reload</v-icon>
+            </v-btn>      
+          </template>
+          <span>Reload orders list</span>
+        </v-tooltip>
 
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="restartTickers(false)"
+              color="blue"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-reload</v-icon>
+            </v-btn>      
+          </template>
+          <span>Restart tickers live = false</span>
+        </v-tooltip>
 
-        <v-btn color="blue" @click="restartTickers(false)">
-            <v-icon>mdi-reload</v-icon>
-        </v-btn>
-
-        <v-btn color="green" @click="restartTickers(true)">
-            <v-icon>mdi-play</v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="restartTickers(true)"
+              color="green"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-play</v-icon>
+            </v-btn>      
+          </template>
+          <span>Restart tickers live = true</span>
+        </v-tooltip>
 
         <v-spacer></v-spacer>
         
@@ -27,11 +55,11 @@
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(orders.length === 0)"
+      :loading="(orders.length === 0) || loading"
       :headers="headers"
       :items="formatted_orders"
       item-key="id"
-      :items-per-page="-1"
+      :items-per-page="100"
       show-group-by
       class="elevation-1"
       :search="search"
@@ -39,7 +67,7 @@
       show-expand
       :expanded.sync="expanded"
       @item-expanded="rowExpandEvent"
-
+      ref="ordersTable"
     >
 
       <template v-slot:top>
@@ -96,7 +124,7 @@
           <v-col cols="12" sm="2" md="2">
  
             <v-text-field
-              v-model="search"
+              v-model="searchInput"
               append-icon="mdi-magnify"
               label="Search"
               single-line
@@ -144,12 +172,18 @@
 import Chart from './Chart.vue';
 import InputDate from './helpers/InputDate.vue'
 
+import {debounce} from './helpers/debounce.js'
+
+
 export default {
   components: { Chart, InputDate },
   data: () => ({
     orders: [],
+    searchInput: '',
     search: '',
     selected: [],
+    loading: false,
+    pageFilteredItems: [],
     filteredItems: [],
     expanded: [],
     filter: {
@@ -167,9 +201,13 @@ export default {
       console.log(this.filter);
     },
     gotFiltered(e){
-      this.filteredItems = e;
+      this.pageFilteredItems = e;
+      this.$nextTick( () => {
+        this.filteredItems = this.$refs.ordersTable.$children[0].filteredItems;
+      });
     },
     reload() {
+          this.loading = true;
           this.$socket.emit('list_orders','1');
     },
     restartTickers(runLive) {
@@ -205,7 +243,8 @@ export default {
     }
 },
   sockets: {
-    orders(data) {  
+    orders(data) {
+        this.loading = false;  
         this.orders = data;
     },
   },
@@ -282,9 +321,17 @@ export default {
               return i;
           });
       }
+  },
+
+  watch: {
+      searchInput: debounce(
+            function (v) { this.search = v; this.loading = false; }, 500,
+            function () { this.loading = true; } )
+       
   }
+  
 }
 </script>
 
 <style>
-</style>
+</style> 
