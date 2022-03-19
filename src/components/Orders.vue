@@ -201,15 +201,14 @@ export default {
   methods: {
     openChartHistory(item) {
 
-      console.log('COMMIT:');
-      this.$store.commit('chart/toggleOn',['entries',item.strategy]);
-      console.log('COMMIT DONE');
+      this.$store.commit('chart/setEnabledSources',['entries',item.strategy]);
 
-      this.$store.dispatch('chart/openHistory',{
+      this.$store.dispatch('chart/openOrderChart',{
           tickerId: item.symbol+'-'+item.timeframe,
-          flags: item.flags,
-          moveTo: item.time
+          orderId: item.id,
+          orderTime: item.time
       });
+
     },
     filterSetValue(id, value) {
       console.log('filterSetValue '+id+' = '+value);

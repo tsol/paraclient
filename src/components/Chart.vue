@@ -17,15 +17,6 @@
  
     <div> Candles: {{ candles.length }}, Flags: {{ flagsList }} </div>
  
-         <v-btn @click="refresh()">
-          <v-icon>mdi-reload</v-icon>  
-        </v-btn>
-        <v-switch v-for="item in debugSources" :key="item" 
-          v-model="enabledSources"
-          color="primary"
-          :label="item"
-          :value="item"
-        ></v-switch>
  
   </div>
 </template>
@@ -47,9 +38,6 @@ export default {
       moveTo: null
   }, 
   data: () => ({
-      debugSources: 
-        ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','touchma','entries'],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
         colorBack: '#fff',
@@ -62,9 +50,6 @@ export default {
   computed: {
       windowIsOpen() {
         return this.$store.state.chart.isOpen;
-      },
-      resultFlags() {
-        return this.flags;
       },
       chartData() {
       return {  
@@ -139,16 +124,16 @@ export default {
       },
       vlevelsData()
       {
-        if (this.resultFlags.vlevels) { return this.resultFlags.vlevels; }
+        if (this.flags.vlevels) { return this.flags.vlevels; }
         return [];
       },
       vlevelsHighData() {
-        if (this.resultFlags.vlevels_high) { return this.resultFlags.vlevels_high; }
+        if (this.flags.vlevels_high) { return this.flags.vlevels_high; }
         return [];        
       },
       flagsList()
       {
-        return Object.keys(this.resultFlags).join(', ');
+        return Object.keys(this.flags).join(', ');
       }
   },
   methods: {
@@ -166,9 +151,6 @@ export default {
         });
       }
       return data;
-    },
-    refresh() {
-      this.$socket.emit('get_chart', { tickerId: this.tickerId } )
     }
   },
   mounted() {
@@ -192,10 +174,9 @@ export default {
             this.$refs.tradingVue.goto( this.moveTo + Math.floor((finish-start)/2)  );
             
             console.log('CHART: moved to target '+this.moveTo);
-         });
-        
+         });  
+        }
     },
-  }
 
 }
 </script>

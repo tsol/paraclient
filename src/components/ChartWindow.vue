@@ -19,7 +19,7 @@
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>{{ $store.state.chart.tickerId }}</v-toolbar-title>
+          <v-toolbar-title>{{ tickerId }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
@@ -33,13 +33,25 @@
         </v-toolbar>
 
         <chart 
-          :tickerId="$store.state.chart.tickerId"
+          :tickerId="tickerId"
           :candles="$store.state.chart.candles"
           :flags="$store.state.chart.flags"
-          :enabledSources="$store.state.chart.displaySources"
+          :enabledSources="enabledSources"
           :moveTo="$store.state.chart.moveTo"
         />
         
+        <v-btn @click="refresh()">
+          <v-icon>mdi-reload</v-icon>  
+        </v-btn>
+
+        <v-switch v-for="item in allSources" :key="item" 
+          v-model="enabledSources"
+          color="primary"
+          :label="item"
+          :value="item"
+        ></v-switch>
+
+
       </v-card>
     </v-dialog>
   </v-row>
@@ -53,14 +65,31 @@ import Chart from './Chart.vue';
 export default {
     components: { Chart },
     data: () => ({
-
+      allSources: 
+        ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
+        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','touchma','entries'],
+      enabledSources: []
     }),
+    methods: {
+        refresh() {
+            this.$socket.emit('get_chart', { tickerId: this.tickerId } )
+        }
+    },
     computed: {
+        tickerId() { return this.$store.state.chart.tickerId; }, 
         isOpen: {
             get: function ()  { return this.$store.state.chart.isOpen; },
             set: function (v) { this.$store.commit('chart/openWindow',v); }
+        }        
+    },
+    watch: {
+        isOpen: function (newV) {
+          if (! newV ) { return; }
+          this.enabledSources = this.$store.state.chart.enabledSources;  
         }
-    }
+    },
+
+
 }
 </script>
 
