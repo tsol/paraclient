@@ -39,15 +39,13 @@
       class="elevation-1"
       show-group-by
       :search="search"
-      show-expand
-      :expanded.sync="expanded"
-      @item-expanded="rowExpandEvent"
     >
-
-        <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-            <Chart :tickerId="item.id" :toggleOn="['extremum']" />
-            </td>
+        <template v-slot:[`item.id`]="{ item }">
+          <v-btn
+            @click="$store.dispatch('chart/openRecent',item.id)"
+          >
+            {{ item.id }}
+          </v-btn>
         </template>
 
         <template v-slot:[`item.firstTimestamp`]="{ item }">
@@ -64,18 +62,15 @@
 </template>
 
 <script>
-import Chart from './Chart.vue';
 
 export default {
-  components: { Chart },
+  components: {},
   data: () => ({
     isConnected: false,
     tickers: [],
     search: '',
     selected: [],
-    expanded: [],
     headers: [
-        { text: 'EXP', value: 'data-table-expand', groupable: false },
         { text: 'id', value: 'id', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true },
         { text: 'Time', value: 'timeframe', groupable: false },
@@ -94,12 +89,6 @@ export default {
     },
     reloadTickers() {
         this.$socket.emit('list_tickers', '')
-    },
-    rowExpandEvent(event) {
-      if (event.value) {
-        let item = event.item;
-        this.$socket.emit('get_chart',{ tickerId: item.id });
-      }
     },
   },
   sockets: {

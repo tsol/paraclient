@@ -4,6 +4,10 @@
 
     <chart-window />
 
+    <v-btn @click="$store.dispatch('chart/openRecent','BTCUSDT-1h')">
+          OPEN 
+    </v-btn>
+
     <v-tabs v-model="tab"
         background-color="indigo"
         dark
@@ -34,12 +38,12 @@
 </template>
 
 <script>
-// import Chart from './components/Chart.vue'
+
 import Tickers from './components/Tickers.vue'
 import Kotomon from './components/Kotomon/Kotomon.vue'
 import Orders from './components/Orders.vue';
 import OrderStats from './components/OrderStats.vue';
-import ChartWindow from './components/overlays/ChartWindow.vue';
+import ChartWindow from './components/ChartWindow.vue';
 
 export default {
   name: 'App',

@@ -64,9 +64,6 @@
       class="elevation-1"
       :search="search"
       @current-items="gotFiltered"
-      show-expand
-      :expanded.sync="expanded"
-      @item-expanded="rowExpandEvent"
       ref="ordersTable"
     >
 
@@ -149,16 +146,13 @@
       </template>
 
 
-    <template v-slot:expanded-item="{ headers, item }">
-            <td :colspan="headers.length">
-            <Chart 
-              :tickerId="item.symbol+'-'+item.timeframe" 
-              :moveTo="item.time"
-              :toggleOn="['entries',item.strategy]"
-              :overrideFlags = item.flags
-             />
-            </td>
-    </template>
+        <template v-slot:[`item.symbol`]="{ item }">
+          <v-btn
+            @click="openChartHistory(item)"
+          >
+            {{ item.symbol }}
+          </v-btn>
+        </template>
 
     <template v-slot:[`item.gain`]="{ item }">
         <div class="green--text" v-if="item.gain > 0">
@@ -180,14 +174,13 @@
 </template>
 
 <script>
-import Chart from './Chart.vue';
 import InputDate from './helpers/InputDate.vue'
 
 import {debounce} from './helpers/debounce.js'
 
 
 export default {
-  components: { Chart, InputDate },
+  components: { InputDate },
   data: () => ({
     orders: [],
     searchInput: '',
@@ -196,7 +189,6 @@ export default {
     loading: false,
     pageFilteredItems: [],
     filteredItems: [],
-    expanded: [],
     filter: {
        dateFrom: null,
        dateTo: null,
@@ -207,6 +199,18 @@ export default {
     }
   }),
   methods: {
+    openChartHistory(item) {
+
+      console.log('COMMIT:');
+      this.$store.commit('chart/toggleOn',['entries',item.strategy]);
+      console.log('COMMIT DONE');
+
+      this.$store.dispatch('chart/openHistory',{
+          tickerId: item.symbol+'-'+item.timeframe,
+          flags: item.flags,
+          moveTo: item.time
+      });
+    },
     filterSetValue(id, value) {
       console.log('filterSetValue '+id+' = '+value);
       this.filter[ id ] = value;
@@ -224,16 +228,6 @@ export default {
     },
     restartTickers(runLive) {
           this.$socket.emit('restart_all',{ runLive: runLive });
-    },
-    rowExpandEvent(event) {
-      if (event.value) {
-        let item = event.item;
-        this.$socket.emit('get_chart',{ tickerId: item.id, timestamp: item.time });
-        this.$nextTick( () =>
-          this.$vuetify.goTo('#'+item.id, { duration: 500, offset: 50 })
-        );
-        
-      }
     },
     dateFromUnix(unixtime) {
         let od = new Date(unixtime);
@@ -265,7 +259,6 @@ export default {
   computed: {
       headers() {
         return [      
-        { text: 'EXP', value: 'data-table-expand', groupable: false },
         { text: 'Symbol', value: 'symbol', groupable: true,
               filter: (v) => { 
                   if (!this.filter.symbol) return true;

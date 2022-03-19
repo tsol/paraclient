@@ -21,7 +21,7 @@
           <v-icon>mdi-reload</v-icon>  
         </v-btn>
         <v-switch v-for="item in debugSources" :key="item" 
-          v-model="enabledSources"
+          v-model="filteredSources"
           color="primary"
           :label="item"
           :value="item"
@@ -41,33 +41,35 @@ export default {
   components: { TradingVue },
   props: {
       tickerId: String,
-      candles: Array,
-      flags: Object,
-      enabledSources: Array,
-      moveTo: null
+      moveTo: null,
+      toggleOn: Array,
+      overrideFlags: null
   }, 
   data: () => ({
+      candles: [],
+      flags: {},
       debugSources: 
         ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
         'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','touchma','entries'],
+      filteredSources: [],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
         colorBack: '#fff',
         colorGrid: '#eee',
         colorText: '#333',
       },
-      width: 0,
-      height: 0,
+      width: window.innerWidth * 0.8,
+      height: window.innerHeight * 0.6,
   }),
   computed: {
-      windowIsOpen() {
-        return this.$store.state.chart.isOpen;
-      },
-      resultFlags() {
-        return this.flags;
-      },
+    resultFlags() {
+      if (this.overrideFlags) { 
+        return this.overrideFlags;
+      }
+      return this.flags;
+    },
       chartData() {
-      return {  
+        return {  
         "chart": {
           "type": "Candles",
           "data": this.ohlcv,
@@ -79,7 +81,7 @@ export default {
             "type": "CandleDebug",
             "data": this.candleDebugData,
             "settings": { 
-              filterSources: this.enabledSources
+              filterSources: this.filteredSources
             }
           },
           {
@@ -114,6 +116,13 @@ export default {
           }
         ],
         "offchart": [
+          /*
+          {
+            "name": "ATR 14",
+            "type": "ATR",
+            "data": this.filterDebug('atr14'),
+            "settings": { }
+          },*/
           {
             "name": "RSI 14",
             "type": "Range",
@@ -153,8 +162,8 @@ export default {
   },
   methods: {
     onResize() {
-      this.width = document.documentElement.clientWidth-10;
-      this.height = window.innerHeight * 0.9
+      this.width = window.innerWidth * 0.8
+      this.height = window.innerHeight * 0.6
     },
     filterDebug(name) {
       let data = [];
@@ -171,31 +180,49 @@ export default {
       this.$socket.emit('get_chart', { tickerId: this.tickerId } )
     }
   },
+  sockets: {
+    chart(data) {
+      if (data.id !== this.tickerId) {
+        return;
+      }
+      this.candles = data.candles;
+      this.flags = data.flags;
+
+      if (! this.flags.vlevels_high ) {
+        this.flags.vlevels_high = [];
+      }
+
+      console.log('CHART: received');
+
+      this.$nextTick(() => {
+        //this.$refs.tradingVue.resetChart()
+        if (this.moveTo) {
+            if (this.candles && this.candles[0] && this.candles[0].openTime <= this.moveTo) {
+              console.log('CHART: moved to target '+this.moveTo);
+              const [start, finish] = this.$refs.tradingVue.getRange();
+              this.$refs.tradingVue.goto( this.moveTo + Math.floor((finish-start)/2)  );
+            }
+            else {
+              alert('Target candle already expired, try later date');
+            }
+
+        }
+        
+      });
+
+
+    }
+  },
   mounted() {
-        this.onResize();
         window.addEventListener('resize', this.onResize)
+
+        if (this.toggleOn && this.toggleOn.length > 0) {
+          this.filteredSources = this.toggleOn;
+        }
+
   },
   beforeDestroy() {
         window.removeEventListener('resize', this.onResize)
   },
-  watch: {
-        windowIsOpen: function (newV) {
-          if (! newV ) { return; }
-          this.$refs.tradingVue.resetChart();
-          this.$nextTick(() => {
-            if (! this.moveTo ) { return; }
-            if (! this.candles || ! this.candles[0] ) { return; }
-            if ( this.candles[0].openTime >= this.moveTo )
-              { return alert('Target candle already expired, try later date'); }
-            
-            const [start, finish] = this.$refs.tradingVue.getRange();
-            this.$refs.tradingVue.goto( this.moveTo + Math.floor((finish-start)/2)  );
-            
-            console.log('CHART: moved to target '+this.moveTo);
-         });
-        
-    },
-  }
-
 }
 </script>
