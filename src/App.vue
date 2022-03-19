@@ -1,6 +1,9 @@
 <template>
 <v-app>
   <div>
+
+    <chart-window />
+
     <v-tabs v-model="tab"
         background-color="indigo"
         dark
@@ -36,6 +39,7 @@ import Tickers from './components/Tickers.vue'
 import Kotomon from './components/Kotomon/Kotomon.vue'
 import Orders from './components/Orders.vue';
 import OrderStats from './components/OrderStats.vue';
+import ChartWindow from './components/overlays/ChartWindow.vue';
 
 export default {
   name: 'App',
@@ -46,7 +50,8 @@ export default {
     Tickers,
     Kotomon,
     Orders,
-    OrderStats
+    OrderStats,
+    ChartWindow
   }
 }
 </script>
