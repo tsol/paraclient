@@ -91,17 +91,16 @@
             /> 
           </v-col>
 
-          <v-col cols="12" sm="2" md="2"> 
+          <v-col cols="12" sm="1" md="1"> 
             <v-text-field
               v-model="filter.symbol"
-              prepend-icon="mdi-currency-usd"
               label="Symbol"
               single-line
-              hide-details
+              clearable
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="2" md="2"> 
+          <v-col cols="12" sm="1" md="1"> 
             <v-text-field
               v-model="filter.timeframe"
               prepend-icon="mdi-clock"
@@ -110,6 +109,18 @@
               hide-details
             ></v-text-field>
           </v-col>
+
+
+          <v-col cols="12" sm="1" md="1"> 
+            <v-text-field
+              v-model="filter.type"
+              prepend-icon="mdi-text-box-check-outline"
+              label="Buy/Sell"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-col>
+
 
           <v-col cols="12" sm="2" md="2"> 
             <v-text-field
@@ -191,7 +202,8 @@ export default {
        dateTo: null,
        strategy: null,
        timeframe: null,
-       symbol: null
+       symbol: null,
+       type: null
     }
   }),
   methods: {
@@ -272,7 +284,12 @@ export default {
         { text: 'Date Time', value: 'time', groupable: false,
               filter: this.filterOrderDate
         },
-        { text: 'BUY/SELL', value: 'type', groupable: false },
+        { text: 'BUY/SELL', value: 'type', groupable: false,
+              filter: (v) => { 
+                  if (!this.filter.type) return true;
+                  return (v === this.filter.type);
+              }
+        },
         { text: 'Qty', value: 'qty', groupable: false },
         /*
         { text: 'Entry Price', value: 'entryPrice', groupable: false },

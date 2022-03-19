@@ -53,7 +53,7 @@ export default {
       flags: {},
       debugSources: 
         ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','touchma','dblbottom','dbltop','crosswma','entries'],
+        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','touchma','entries'],
       filteredSources: [],
       overlays: [ValueBars, CandleDebug, ATR],
       colors: {
@@ -80,7 +80,7 @@ export default {
         },
         "onchart": [
           {
-            "name": "CandleDebug 10",
+            "name": "C",
             "type": "CandleDebug",
             "data": this.candleDebugData,
             "settings": { 
@@ -88,33 +88,33 @@ export default {
             }
           },
           {
-            "name": "ValueBars CUR",
+            "name": "V",
             "type": "ValueBars",
             "data": [],
             "settings": { bars: this.vlevelsData }
           },
           {
-            "name": "ValueBars HIGH",
+            "name": "V",
             "type": "ValueBars",
             "data": [],
             "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
           {
-            "name": "RMAC21",
+            "name": "MAC9",
             "type": "SMA",
-            "data": this.filterDebug('rmac21'),
+            "data": this.filterDebug('mac9'),
             "settings": { color: 'blue' }
           },
           {
-            "name": "RMAC50",
+            "name": "MAC50",
             "type": "SMA",
-            "data": this.filterDebug('rmac50'),
+            "data": this.filterDebug('mac50'),
             "settings": { color: 'green' }
           },
           {
-            "name": "RMAC200",
+            "name": "MAC100",
             "type": "SMA",
-            "data": this.filterDebug('rmac200'),
+            "data": this.filterDebug('mac100'),
             "settings": { color: 'red' }
           }
         ],
