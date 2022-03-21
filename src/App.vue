@@ -4,10 +4,6 @@
 
     <chart-window />
 
-    <v-btn @click="$store.dispatch('chart/openRecent','BTCUSDT-1h')">
-          OPEN 
-    </v-btn>
-
     <v-tabs v-model="tab"
         background-color="indigo"
         dark
