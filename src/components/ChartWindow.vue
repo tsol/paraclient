@@ -19,9 +19,15 @@
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>{{ tickerId }}</v-toolbar-title>
+
+          <v-btn icon dark @click="refresh()">
+              <v-icon>mdi-reload</v-icon>  
+          </v-btn>
+
+          <v-toolbar-title> {{ tickerId }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
+
             <v-btn
               dark
               text
@@ -40,9 +46,6 @@
           :moveTo="$store.state.chart.moveTo"
         />
         
-        <v-btn @click="refresh()">
-          <v-icon>mdi-reload</v-icon>  
-        </v-btn>
 
         <v-switch v-for="item in allSources" :key="item" 
           v-model="enabledSources"

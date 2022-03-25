@@ -62,7 +62,6 @@
       :items-per-page="100"
       show-group-by
       class="elevation-1"
-      :search="search"
       @current-items="gotFiltered"
       ref="ordersTable"
     >
@@ -71,21 +70,26 @@
         
         <v-row>
           <v-col cols="12" sm="2" md="2">
-            <InputDate
-              defaultValue="" 
-              id="dateFrom"
-              label="С даты"
-              @dateSelected="(e) => filterSetValue(e.id, e.value)"
-            /> 
-          </v-col>
+           
+            <v-datetime-picker
+                v-model="filter.dateFrom"
+                label="С даты"
+                :text-field-props="{prependIcon: 'mdi-calendar'}"
+                :date-picker-props="{ locale:'ru-RU' }"
+                :time-picker-props="{ format: '24hr' }"
+            ></v-datetime-picker>
 
+          </v-col>
+          
           <v-col cols="12" sm="2" md="2">
-            <InputDate
-              defaultValue="" 
-              id="dateTo"
-              label="По дату"
-              @dateSelected="(e) => filterSetValue(e.id, e.value)"
-            /> 
+            
+            <v-datetime-picker
+                v-model="filter.dateTo"
+                label="По дату"
+                :date-picker-props="{ locale:'ru-RU' }"
+                :time-picker-props="{ format: '24hr' }"
+            ></v-datetime-picker>
+
           </v-col>
 
           <v-col cols="12" sm="1" md="1"> 
@@ -145,6 +149,13 @@
         
       </template>
 
+        <template v-slot:[`item.real`]="{ item }">
+          <v-btn
+            @click="makeOrderReal(item)"
+          >
+            {{ ( item.comment.includes('[BROK]') ? 'Y' : 'N' ) }}
+          </v-btn>
+        </template>
 
         <template v-slot:[`item.symbol`]="{ item }">
           <v-btn
@@ -174,17 +185,17 @@
 </template>
 
 <script>
-import InputDate from './helpers/InputDate.vue'
+
+//import InputDate from './helpers/InputDate.vue'
 
 import {debounce} from './helpers/debounce.js'
 
 
 export default {
-  components: { InputDate },
+  components: {  },
   data: () => ({
     orders: [],
     searchInput: '',
-    search: '',
     selected: [],
     loading: false,
     pageFilteredItems: [],
@@ -195,10 +206,15 @@ export default {
        strategy: null,
        timeframe: null,
        symbol: null,
-       type: null
+       type: null,
+       tags: []
     }
   }),
   methods: {
+    makeOrderReal(item) {
+      this.$socket.emit('make_real_order',{ orderId: item.id });
+      this.loading = true;
+    },
     openChartHistory(item) {
 
       this.$store.commit('chart/setEnabledSources',['entries',item.strategy]);
@@ -257,7 +273,8 @@ export default {
   },
   computed: {
       headers() {
-        return [      
+        return [
+        { text: 'RL', value: 'real', groupable: false },      
         { text: 'Symbol', value: 'symbol', groupable: true,
               filter: (v) => { 
                   if (!this.filter.symbol) return true;
@@ -293,14 +310,30 @@ export default {
         { text: 'Gain USD', value: 'gain', groupable: false },
         { text: 'Reached', value: 'reachedPercent', groupable: false },
         { text: 'Result', value: 'result', groupable: false },
-        { text: 'Comment', value: 'comment', groupable: false }
+        { text: 'Comment', value: 'comment', groupable: false,
+            filter: (value,st,item) => {
+                if (!this.filter.tags || this.filter.tags.length == 0) return true;
+                
+                const searchIn =  item.symbol + item.timeframe + item.type +
+                        item.strategy + item.result +
+                        item.comment;
+
+                return this.filter.tags.every( (w) => searchIn.includes(w) );
+            }
+        },
+
+/*              filter: (comment) => { 
+                  if (!this.filter.commentWords) return true;
+                  return this.filter.commentWords.every( (w) => comment.includes(w) );
+              }*/
+      
         ];
       },
       filterDateFromTimestamp() {
-        return this.dateToUnix(this.filter.dateFrom+' 00:00:00');
+        return this.dateToUnix(this.filter.dateFrom);
       },
       filterDateToTimestamp() {
-        return this.dateToUnix(this.filter.dateTo+' 23:59:59');
+        return this.dateToUnix(this.filter.dateTo);
       },
       countSymbols() {
         let uniq = {};
@@ -334,7 +367,7 @@ export default {
 
   watch: {
       searchInput: debounce(
-            function (v) { this.search = v; this.loading = false; }, 500,
+            function (v) { this.filter.tags = v.split(/,\s*/); this.loading = false; }, 700,
             function () { this.loading = true; } )
        
   }
