@@ -15,7 +15,7 @@
           </template>
           <span>Reload orders list</span>
         </v-tooltip>
-
+<!--
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -43,7 +43,7 @@
           </template>
           <span>Restart tickers live = true</span>
         </v-tooltip>
-
+-->
         <v-spacer></v-spacer>
         
         <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
@@ -299,7 +299,7 @@ export default {
                   return (v === this.filter.type);
               }
         },
-        { text: 'Qty', value: 'qty', groupable: false },
+        { text: 'Qty', value: 'quantity', groupable: false },
         /*
         { text: 'Entry Price', value: 'entryPrice', groupable: false },
         { text: 'Take Profit', value: 'takeProfit', groupable: false },
@@ -357,7 +357,7 @@ export default {
 
       formatted_orders() {
           return this.orders.map( i => {
-              i.qty = i.qty.toPrecision(5);
+              i.quantity = i.quantity.toPrecision(5);
               i.takeProfit = i.takeProfit.toPrecision(5);
               i.stopLoss = i.stopLoss.toPrecision(5);
               return i;

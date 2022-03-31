@@ -11,7 +11,7 @@ Vue.use(DatetimePicker)
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: 'http://192.168.1.10:3005',
+  connection: process.env.VUE_APP_WSS_PARASERVER,
   vuex: {
       store, actionPrefix: 'SOCKET_',
   },

@@ -6,7 +6,7 @@
         <v-btn @click="reload()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
-
+<!--
         <v-btn color="blue" @click="restartTickers(false)">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
@@ -14,7 +14,7 @@
         <v-btn color="green" @click="restartTickers(true)">
             <v-icon>mdi-play</v-icon>
         </v-btn>
-
+-->
         <v-spacer></v-spacer>
         
         <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b></div>

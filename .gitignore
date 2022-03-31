@@ -3,3 +3,4 @@ dist
 *~
 DEADJOE
 ^z\d*$
+deploy.sh

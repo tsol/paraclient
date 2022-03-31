@@ -96,6 +96,20 @@ export default {
 
             ctx.fillStyle = 'green';
             ctx.fillRect(fromX,middleY,widthX,(takeProfitY-middleY));
+
+            ctx.globalAlpha = 0.8;
+
+            ctx.lineWidth = 1.5
+            ctx.strokeStyle = 'black'
+            ctx.fillStyle = '#555'
+            ctx.font = '10px Arial'
+            ctx.textAlign = 'center'
+
+            let x = fromX+widthX/2;
+            let y = takeProfitY+10;
+                    
+            ctx.fillText(item.by , x, y )
+            
             
         },
         filterItems(items) {
@@ -112,10 +126,9 @@ export default {
                 this.drawCircles(layout,ctx,items.filter( i => i.type === 'circle'));
                 this.drawLabels(layout,ctx,candle,items.filter( i => i.type === 'label'));
                 
-                let entryItem = items.find( i => i.type == 'entry' );
-                if (entryItem) {
-                    this.drawEntryBox(layout,ctx,candle,entryItem);
-                }
+                items.filter( i => i.type == 'entry' )
+                    .forEach( item => this.drawEntryBox(layout,ctx,candle,item) );
+                    
             }
 
 
