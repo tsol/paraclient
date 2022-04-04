@@ -56,7 +56,9 @@ export default {
         SOCKET_order: {
             root: true,
             handler (context, orderData) {
-                context.commit('setFlags',orderData.flags);          
+                if (orderData.flags) {
+                    context.commit('setFlags',orderData.flags);
+                }          
             }
         },
         SOCKET_chart: {

@@ -77,7 +77,10 @@
                 :text-field-props="{prependIcon: 'mdi-calendar'}"
                 :date-picker-props="{ locale:'ru-RU' }"
                 :time-picker-props="{ format: '24hr' }"
-            ></v-datetime-picker>
+            >
+              <template v-slot:dateIcon ><v-icon>mdi-calendar</v-icon></template>
+              <template v-slot:timeIcon ><v-icon>mdi-clock</v-icon></template>
+            </v-datetime-picker>
 
           </v-col>
           
@@ -88,7 +91,10 @@
                 label="По дату"
                 :date-picker-props="{ locale:'ru-RU' }"
                 :time-picker-props="{ format: '24hr' }"
-            ></v-datetime-picker>
+            >
+              <template v-slot:dateIcon ><v-icon>mdi-calendar</v-icon></template>
+              <template v-slot:timeIcon ><v-icon>mdi-clock</v-icon></template>
+            </v-datetime-picker>
 
           </v-col>
 
@@ -190,6 +196,10 @@
 
 import {debounce} from './helpers/debounce.js'
 
+function fnum(number, precision) {
+    var factor = Math.pow(10, precision);
+    return Math.round(number * factor) / factor;
+}
 
 export default {
   components: {  },
@@ -300,11 +310,12 @@ export default {
               }
         },
         { text: 'Qty', value: 'quantity', groupable: false },
-        /*
+        
         { text: 'Entry Price', value: 'entryPrice', groupable: false },
         { text: 'Take Profit', value: 'takeProfit', groupable: false },
         { text: 'Stop Loss', value: 'stopLoss', groupable: false },
         { text: 'Close Price', value: 'closePrice', groupable: false },
+        /*
         { text: 'Active', value: 'active', groupable: false },
         */
         { text: 'Gain USD', value: 'gain', groupable: false },
@@ -356,10 +367,14 @@ export default {
       },
 
       formatted_orders() {
+ //           return this.orders;
           return this.orders.map( i => {
-              i.quantity = i.quantity.toPrecision(5);
-              i.takeProfit = i.takeProfit.toPrecision(5);
-              i.stopLoss = i.stopLoss.toPrecision(5);
+              i.quantity    = fnum(i.quantity,5);
+              i.takeProfit  = fnum(i.takeProfit,5);
+              i.stopLoss    = fnum(i.stopLoss, 5);
+              i.entryPrice  = fnum(i.entryPrice, 5);
+              i.closePrice  = fnum(i.closePrice, 5);
+              i.gain        = fnum(i.gain, 3);
               return i;
           });
       }
