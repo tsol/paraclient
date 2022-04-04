@@ -129,7 +129,7 @@ export default {
     filter: {
        dateFrom: null,
        dateTo: null,
-       tag: 'CU',
+       tag: 'CU2',
        tagValue: 'Y',
        interval: 'm',
        eval: null
