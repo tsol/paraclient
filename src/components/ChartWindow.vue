@@ -5,6 +5,7 @@
       fullscreen
       hide-overlay
       transition="dialog-bottom-transition"
+      eager
     >
       
       <v-card>
@@ -70,7 +71,7 @@ export default {
     data: () => ({
       allSources: 
         ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','touchma','entries'],
+        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','entries'],
       enabledSources: []
     }),
     methods: {

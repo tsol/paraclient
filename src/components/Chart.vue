@@ -80,21 +80,21 @@ export default {
             "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
           {
-            "name": "MAC9",
+            "name": "RMAC21",
             "type": "SMA",
-            "data": this.filterDebug('mac9'),
-            "settings": { color: 'blue' }
-          },
-          {
-            "name": "MAC50",
-            "type": "SMA",
-            "data": this.filterDebug('mac50'),
+            "data": this.filterDebug('rmac21'),
             "settings": { color: 'green' }
           },
           {
-            "name": "MAC100",
+            "name": "EMAC50",
             "type": "SMA",
-            "data": this.filterDebug('mac100'),
+            "data": this.filterDebug('emac50'),
+            "settings": { color: 'blue' }
+          },
+          {
+            "name": "EMAC200",
+            "type": "SMA",
+            "data": this.filterDebug('emac200'),
             "settings": { color: 'red' }
           }
         ],
@@ -105,6 +105,13 @@ export default {
             "data": this.filterDebug('rsi14'),
             "settings": { }
           },
+          {
+            "name": "ATR 14",
+            "type": "ATR",
+            "data": this.filterDebug('atr14'),
+            "settings": { }
+          },
+
         ]
         };
       },
@@ -155,7 +162,7 @@ export default {
   },
   mounted() {
         this.onResize();
-        window.addEventListener('resize', this.onResize)
+        window.addEventListener('resize', this.onResize);
   },
   beforeDestroy() {
         window.removeEventListener('resize', this.onResize)
