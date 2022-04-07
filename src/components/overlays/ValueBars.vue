@@ -7,7 +7,6 @@ export default {
     mixins: [Overlay],
     methods: {
         legend() { return [] },
-    
         drawHorizontalBar(layout,ctx,item) {
             ctx.fillStyle = item.color || this.color;
             ctx.globalAlpha = item.alpha || 0.3;

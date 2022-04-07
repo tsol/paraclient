@@ -27,6 +27,8 @@ import TradingVue from 'trading-vue-js'
 import CandleDebug from './overlays/CandleDebug.vue'
 import ValueBars from './overlays/ValueBars.vue'
 import ATR from './overlays/ATR.vue'
+import MACD from './overlays/MACD.vue'
+
 
 export default {
   components: { TradingVue },
@@ -38,7 +40,7 @@ export default {
       moveTo: null
   }, 
   data: () => ({
-      overlays: [ValueBars, CandleDebug, ATR],
+      overlays: [ValueBars, CandleDebug, ATR, MACD ],
       colors: {
         colorBack: '#fff',
         colorGrid: '#eee',
@@ -80,9 +82,9 @@ export default {
             "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
           {
-            "name": "RMAC21",
+            "name": "EMAC20",
             "type": "SMA",
-            "data": this.filterDebug('rmac21'),
+            "data": this.filterDebug('emac20'),
             "settings": { color: 'green' }
           },
           {
@@ -105,13 +107,19 @@ export default {
             "data": this.filterDebug('rsi14'),
             "settings": { }
           },
-          {
+          /*{
             "name": "ATR 14",
             "type": "ATR",
             "data": this.filterDebug('atr14'),
             "settings": { }
           },
-
+          */
+          {
+            "name": "MACD",
+            "type": "MACD",
+            "data": this.filterDebugMACD('macd'),
+            "settings": { }
+          },
         ]
         };
       },
@@ -154,6 +162,17 @@ export default {
         candle.visualDebug.forEach( (vd) => {
           if (vd.name === name) {
             data.push([candle.openTime, vd.value]);
+          }
+        });
+      }
+      return data;
+    },
+    filterDebugMACD(name) {
+      let data = [];
+      for (var candle of this.candles) {
+        candle.visualDebug.forEach( (vd) => {
+          if (vd.name === name) {
+            data.push([candle.openTime, vd.value.h, vd.value.m, vd.value.s]);
           }
         });
       }

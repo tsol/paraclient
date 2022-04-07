@@ -70,7 +70,7 @@ export default {
     components: { Chart },
     data: () => ({
       allSources: 
-        ['extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
+        ['mat1','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
         'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','entries'],
       enabledSources: []
     }),

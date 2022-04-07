@@ -22,7 +22,16 @@ export default {
             ctx.stroke()
         },
         use_for() { return ['ATR'] },
-        data_colors() { return [this.color] }
+        data_colors() { return [this.color] },
+        meta_info() {
+            return {
+                author:     'Igor Kravets',
+                version:    '1.0.0',
+                desc:       'para trading bot: My Simple Line',
+                contact:    '',
+                github:     ''
+            }
+        },
     },
     computed: {
         color() {
