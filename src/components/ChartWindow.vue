@@ -71,7 +71,7 @@ export default {
     data: () => ({
       allSources: 
         ['mat1','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','entries'],
+        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','geroflvl','entries'],
       enabledSources: []
     }),
     methods: {

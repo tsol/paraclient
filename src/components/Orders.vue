@@ -186,6 +186,13 @@
         </div>
     </template>
 
+
+    <template v-slot:[`item.closeTime`]="{ item }">
+        <div :id="item.id">
+        {{ dateFromUnix(item.closeTime) }}
+        </div>
+    </template>
+
     </v-data-table> 
 </v-card>
 </template>
@@ -315,6 +322,7 @@ export default {
         { text: 'Take Profit', value: 'takeProfit', groupable: false },
         { text: 'Stop Loss', value: 'stopLoss', groupable: false },
         { text: 'Close Price', value: 'closePrice', groupable: false },
+        { text: 'Close Time', value: 'closeTime', groupable: false },
         /*
         { text: 'Active', value: 'active', groupable: false },
         */
