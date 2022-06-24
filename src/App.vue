@@ -9,10 +9,12 @@
         dark
     >
       <v-tab>Tickers</v-tab>
-      <v-tab>Orders</v-tab>
+      <v-tab>Entries</v-tab>
+     <!--
       <v-tab>Stats</v-tab>
       <v-tab>Report</v-tab>
       <v-tab>Kotomon</v-tab>
+    -->
     </v-tabs>
 
      <v-tabs-items v-model="tab" touchless>
@@ -20,8 +22,9 @@
         <tickers />
       </v-tab-item>
       <v-tab-item>
-        <orders />
+        <entries />
       </v-tab-item>
+      <!--
       <v-tab-item>
         <order-stats />
       </v-tab-item>
@@ -31,6 +34,7 @@
       <v-tab-item>
         <kotomon />
       </v-tab-item>
+      -->
      </v-tabs-items>
 
   </div>
@@ -40,11 +44,14 @@
 <script>
 
 import Tickers from './components/Tickers.vue'
-import Kotomon from './components/Kotomon/Kotomon.vue'
-import Orders from './components/Orders.vue';
-import OrderStats from './components/OrderStats.vue';
+import Entries from './components/Entries.vue';
 import ChartWindow from './components/ChartWindow.vue';
+
+/*
+import Kotomon from './components/Kotomon/Kotomon.vue'
+import OrderStats from './components/OrderStats.vue';
 import OrdersReport from './components/OrdersReport.vue';
+*/
 
 export default {
   name: 'App',
@@ -53,11 +60,8 @@ export default {
   }),
   components: {
     Tickers,
-    Kotomon,
-    Orders,
-    OrderStats,
+    Entries,
     ChartWindow,
-    OrdersReport
   }
 }
 </script>

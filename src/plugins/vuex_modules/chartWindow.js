@@ -42,22 +42,22 @@ export default {
             this._vm.$socket.emit('get_chart', { tickerId: tickerId } );
             this._vm.$socket.emit('get_flags', { tickerId: tickerId } );
         },
-        openOrderChart(context, { tickerId, orderTime, orderId })
+        openEntryChart(context, { tickerId, entryTime, entryId })
         {
             this._vm.$socket.emit('get_chart', { 
                 tickerId: tickerId,
-                timestamp: orderTime
+                timestamp: entryTime
             });
 
-            this._vm.$socket.emit('get_order', { orderId: orderId });
+            this._vm.$socket.emit('get_entry', { entryId: entryId });
             
-            context.commit('setMoveTo', orderTime );
+            context.commit('setMoveTo', entryTime );
         },
-        SOCKET_order: {
+        SOCKET_entry: {
             root: true,
-            handler (context, orderData) {
-                if (orderData.flags) {
-                    context.commit('setFlags',orderData.flags);
+            handler (context, entryData) {
+                if (entryData.flags) {
+                    context.commit('setFlags',entryData.flags);
                 }          
             }
         },

@@ -13,7 +13,7 @@
               <v-icon>mdi-reload</v-icon>
             </v-btn>      
           </template>
-          <span>Reload orders list</span>
+          <span>Reload entries list</span>
         </v-tooltip>
 <!--
         <v-tooltip bottom>
@@ -46,7 +46,7 @@
 -->
         <v-spacer></v-spacer>
         
-        <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
+        <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}%</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
  
        <v-spacer></v-spacer>
  
@@ -55,15 +55,15 @@
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(orders.length === 0) || loading"
+      :loading="(entries.length === 0) || loading"
       :headers="headers"
-      :items="formatted_orders"
+      :items="formatted_entries"
       item-key="id"
       :items-per-page="100"
       show-group-by
       class="elevation-1"
       @current-items="gotFiltered"
-      ref="ordersTable"
+      ref="entriesTable"
     >
 
       <template v-slot:top>
@@ -157,7 +157,7 @@
 
         <template v-slot:[`item.real`]="{ item }">
           <v-btn
-            @click="makeOrderReal(item)"
+            @click="makeEntryReal(item)"
           >
             {{ ( item.comment.includes('[BROK]') ? 'Y' : 'N' ) }}
           </v-btn>
@@ -171,12 +171,12 @@
           </v-btn>
         </template>
 
-    <template v-slot:[`item.gain`]="{ item }">
-        <div class="green--text" v-if="item.gain > 0">
-        {{ item.gain }}
+    <template v-slot:[`item.gainPercent`]="{ item }">
+        <div class="green--text" v-if="item.gainPercent > 0">
+        {{ item.gainPercent }}
         </div>
         <div class="red--text" v-else>
-        {{ item.gain }}
+        {{ item.gainPercent }}
         </div>
     </template>
 
@@ -189,7 +189,7 @@
 
     <template v-slot:[`item.closeTime`]="{ item }">
         <div :id="item.id">
-        {{ dateFromUnix(item.closeTime) }}
+        {{ ( item.closeTime > 0 ? dateFromUnix(item.closeTime) : '-' ) }}
         </div>
     </template>
 
@@ -211,7 +211,7 @@ function fnum(number, precision) {
 export default {
   components: {  },
   data: () => ({
-    orders: [],
+    entries: [],
     searchInput: '',
     selected: [],
     loading: false,
@@ -228,18 +228,18 @@ export default {
     }
   }),
   methods: {
-    makeOrderReal(item) {
-      this.$socket.emit('make_real_order',{ orderId: item.id });
-      this.loading = true;
+    makeEntryReal(item) {
+      this.$socket.emit('make_real_entry',{ entryId: item.id });
+      //this.loading = true;
     },
     openChartHistory(item) {
 
       this.$store.commit('chart/setEnabledSources',['entries',item.strategy]);
 
-      this.$store.dispatch('chart/openOrderChart',{
+      this.$store.dispatch('chart/openEntryChart',{
           tickerId: item.symbol+'-'+item.timeframe,
-          orderId: item.id,
-          orderTime: item.time
+          entryId: item.id,
+          entryTime: item.time
       });
 
     },
@@ -251,12 +251,12 @@ export default {
     gotFiltered(e){
       this.pageFilteredItems = e;
       this.$nextTick( () => {
-        this.filteredItems = this.$refs.ordersTable.$children[0].filteredItems;
+        this.filteredItems = this.$refs.entriesTable.$children[0].filteredItems;
       });
     },
     reload() {
           this.loading = true;
-          this.$socket.emit('list_orders','1');
+          this.$socket.emit('list_entries','1');
     },
     restartTickers(runLive) {
           this.$socket.emit('restart_all',{ runLive: runLive });
@@ -270,7 +270,7 @@ export default {
         const date = new Date(dateString);
         return date.getTime();
     },
-    filterOrderDate(timestamp) {
+    filterEntryDate(timestamp) {
       if (this.filter.dateFrom && (timestamp < this.filterDateFromTimestamp) ) {
         return false;
       }
@@ -281,9 +281,9 @@ export default {
     }
 },
   sockets: {
-    orders(data) {
+    entries(data) {
         this.loading = false;  
-        this.orders = data;
+        this.entries = data;
     },
   },
   mounted() {
@@ -308,7 +308,7 @@ export default {
                   return (v.includes(this.filter.strategy));
               } },
         { text: 'Date Time', value: 'time', groupable: false,
-              filter: this.filterOrderDate
+              filter: this.filterEntryDate
         },
         { text: 'BUY/SELL', value: 'type', groupable: false,
               filter: (v) => { 
@@ -316,8 +316,6 @@ export default {
                   return (v === this.filter.type);
               }
         },
-        { text: 'Qty', value: 'quantity', groupable: false },
-        
         { text: 'Entry Price', value: 'entryPrice', groupable: false },
         { text: 'Take Profit', value: 'takeProfit', groupable: false },
         { text: 'Stop Loss', value: 'stopLoss', groupable: false },
@@ -326,8 +324,9 @@ export default {
         /*
         { text: 'Active', value: 'active', groupable: false },
         */
-        { text: 'Gain USD', value: 'gain', groupable: false },
-        { text: 'Reached', value: 'reachedPercent', groupable: false },
+        { text: 'GAIN%', value: 'gainPercent', groupable: false },
+        { text: 'TAKE%', value: 'takePercentReached', groupable: false },
+        { text: 'LOSS%', value: 'lossPercentReached', groupable: false },
         { text: 'Result', value: 'result', groupable: false },
         { text: 'Comment', value: 'comment', groupable: false,
             filter: (value,st,item) => {
@@ -361,8 +360,8 @@ export default {
       },
       winLooseRatio()
       {
-        let win = this.filteredItems.reduce( (p,c) => p + ( c.gain > 0 ? 1 : 0) , 0);
-        let loose = this.filteredItems.reduce( (p,c) => p + ( c.gain < 0 ? 1 : 0) , 0);
+        let win = this.filteredItems.reduce( (p,c) => p + ( c.gainPercent > 0 ? 1 : 0) , 0);
+        let loose = this.filteredItems.reduce( (p,c) => p + ( c.gainPercent < 0 ? 1 : 0) , 0);
         
         let ratio = 0;
         if (win > 0) { ratio = (win / (win+loose)) * 100; }
@@ -371,18 +370,18 @@ export default {
       },
 
       sumSelectedGain() {
-         return this.filteredItems.reduce( (p,c) => p + c.gain, 0).toFixed(2);
+         return this.filteredItems.reduce( (p,c) => p + c.gainPercent, 0).toFixed(2);
       },
 
-      formatted_orders() {
- //           return this.orders;
-          return this.orders.map( i => {
+      formatted_entries() {
+ //           return this.entries;
+          return this.entries.map( i => {
               i.quantity    = fnum(i.quantity,5);
               i.takeProfit  = fnum(i.takeProfit,5);
               i.stopLoss    = fnum(i.stopLoss, 5);
               i.entryPrice  = fnum(i.entryPrice, 5);
               i.closePrice  = fnum(i.closePrice, 5);
-              i.gain        = fnum(i.gain, 3);
+              i.gainPercent = fnum(i.gainPercent, 3);
               return i;
           });
       }

@@ -28,6 +28,7 @@ import CandleDebug from './overlays/CandleDebug.vue'
 import ValueBars from './overlays/ValueBars.vue'
 import ATR from './overlays/ATR.vue'
 import MACD from './overlays/MACD.vue'
+import BBANDS from './overlays/BBANDS.vue'
 
 
 export default {
@@ -40,7 +41,7 @@ export default {
       moveTo: null
   }, 
   data: () => ({
-      overlays: [ValueBars, CandleDebug, ATR, MACD ],
+      overlays: [ValueBars, CandleDebug, ATR, MACD, BBANDS ],
       colors: {
         colorBack: '#fff',
         colorGrid: '#eee',
@@ -48,6 +49,7 @@ export default {
       },
       width: 0,
       height: 0,
+      onChart: []
   }),
   computed: {
       windowIsOpen() {
@@ -60,7 +62,7 @@ export default {
           "data": this.ohlcv,
           "settings": { }
         },
-        "onchart": [
+        "onchart":  [
           {
             "name": "C",
             "type": "CandleDebug",
@@ -81,32 +83,15 @@ export default {
             "data": [],
             "settings": { bars: this.vlevelsHighData, color: 'yellow' }
           },
-          {
-            "name": "EMAC20",
-            "type": "SMA",
-            "data": this.filterDebug('emac20'),
-            "settings": { color: 'green' }
-          },
-          {
-            "name": "EMAC50",
-            "type": "SMA",
-            "data": this.filterDebug('emac50'),
-            "settings": { color: 'blue' }
-          },
-          {
-            "name": "EMAC200",
-            "type": "SMA",
-            "data": this.filterDebug('emac200'),
-            "settings": { color: 'red' }
-          }
+          ... this.onChart
         ],
         "offchart": [
-          {
+          /*{
             "name": "RSI 14",
             "type": "Range",
             "data": this.filterDebug('rsi14'),
             "settings": { }
-          },
+          },*/
           /*{
             "name": "ATR 14",
             "type": "ATR",
@@ -152,9 +137,17 @@ export default {
       }
   },
   methods: {
+    plot(name,color) {
+      this.onChart.push({
+            "name": name,
+            "type": "SMA",
+            "data": this.filterDebug(name),
+            "settings": { color: color }
+      });
+    },
     onResize() {
       this.width = document.documentElement.clientWidth-10;
-      this.height = window.innerHeight * 0.9
+      this.height = window.innerHeight * 0.8
     },
     filterDebug(name) {
       let data = [];
@@ -177,7 +170,23 @@ export default {
         });
       }
       return data;
-    }
+    },
+    hookOpen() {
+        this.onChart = [];
+
+        this.plot('mac5','fuchsia');
+        this.plot('emac18','#00FF00')
+        this.plot('emac20','#000000')
+        this.plot('mac50','blue');
+        this.plot('mac89','grey');
+        this.plot('emac144','#FF4500');
+        this.plot('emac35','grey');
+        this.plot('ku','grey');
+        this.plot('kl','grey');
+      
+        console.log('HOOK_OPEN candles count = '+this.candles.length);
+        
+    },
   },
   mounted() {
         this.onResize();
@@ -190,7 +199,9 @@ export default {
         windowIsOpen: function (newV) {
           if (! newV ) { return; }
           this.$refs.tradingVue.resetChart();
+          
           this.$nextTick(() => {
+            this.hookOpen();  
             if (! this.moveTo ) { return; }
             if (! this.candles || ! this.candles[0] ) { return; }
             if ( this.candles[0].openTime >= this.moveTo )

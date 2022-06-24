@@ -70,8 +70,9 @@ export default {
     components: { Chart },
     data: () => ({
       allSources: 
-        ['mat1','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','geroflvl','entries'],
+        ['hoffman1','macdf','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
+        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','geroflvl',
+        'entries'],
       enabledSources: []
     }),
     methods: {

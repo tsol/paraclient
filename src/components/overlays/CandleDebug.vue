@@ -87,7 +87,7 @@ export default {
             const fromX = layout.t2screen(candle.openTime)
             const candleWidth = layout.t2screen(candle.closeTime) - layout.t2screen(candle.openTime);
             const widthX = 10 * candleWidth;
-            const middleY = layout.$2screen(candle.close);
+            const middleY = layout.$2screen(item.ep || candle.close);
             const takeProfitY = layout.$2screen(item.tp);
             const stopLossY = layout.$2screen(item.sl);
 
