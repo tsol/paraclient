@@ -10,6 +10,8 @@
     >
       <v-tab>Tickers</v-tab>
       <v-tab>Entries</v-tab>
+      <v-tab>Orders</v-tab>
+
      <!--
       <v-tab>Stats</v-tab>
       <v-tab>Report</v-tab>
@@ -24,6 +26,11 @@
       <v-tab-item>
         <entries />
       </v-tab-item>
+      <v-tab-item>
+        <orders />
+      </v-tab-item>
+
+
       <!--
       <v-tab-item>
         <order-stats />
@@ -45,7 +52,10 @@
 
 import Tickers from './components/Tickers.vue'
 import Entries from './components/Entries.vue';
+import Orders from './components/Orders.vue';
+
 import ChartWindow from './components/ChartWindow.vue';
+
 
 /*
 import Kotomon from './components/Kotomon/Kotomon.vue'
@@ -61,6 +71,7 @@ export default {
   components: {
     Tickers,
     Entries,
+    Orders,
     ChartWindow,
   }
 }
