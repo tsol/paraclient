@@ -1,6 +1,16 @@
 
 <template>
 <v-card>
+
+<v-dialog v-model="epFormIsOpen">
+   <v-dynamic-form
+    v-model="epFormData"
+    :input-fields="epFormInputs"
+    @submit="epFormSubmit"
+    @cancel="epFormIsOpen = false"
+  />
+</v-dialog>
+
     <v-card-title>
             
         <v-tooltip bottom>
@@ -15,21 +25,22 @@
           </template>
           <span>Reload orders list</span>
         </v-tooltip>
-<!--
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              @click="restartTickers(false)"
+              @click="epFormOpen()"
               color="blue"
               v-bind="attrs"
               v-on="on"
             >
-              <v-icon>mdi-reload</v-icon>
+              <v-icon>mdi-cog-refresh</v-icon>
             </v-btn>      
           </template>
-          <span>Restart tickers live = false</span>
+          <span>Change settings / re-run entry plan</span>
         </v-tooltip>
 
+<!--
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -52,6 +63,7 @@
  
     </v-card-title>
 
+ 
     <v-data-table
       v-model="selected"
       show-select
@@ -202,15 +214,36 @@
 //import InputDate from './helpers/InputDate.vue'
 
 import {debounce} from './helpers/debounce.js'
+import VDynamicForm from './VDynamicForm.vue'
 
 function fnum(number, precision) {
     var factor = Math.pow(10, precision);
     return Math.round(number * factor) / factor;
 }
 
+import {is_numeric} from './helpers/numeric.js'
+
 export default {
-  components: {  },
+  components: { VDynamicForm },
   data: () => ({
+    STRINGIFY_PARAMS: ['TAGS', 'SYMBOLS', 'STRATEGIES', 'TIMEFRAMES'],
+    epFormIsOpen: false,
+    epFormData: { },
+    epFormInputs: {
+        START_SUM:  { name: 'Start USD', type: 'text', line: 1, rules: 'required|numeric' },
+        STAKE_MODE: { name: 'Stake Mode', type: 'select', props: { items: ['fixed','percent'] }, line: 1 },
+        STAKE_PERCENT: { name: 'Stake %', type: 'text', line: 2, rules: 'double' },
+        SIMULT_RISK_PERCENT: { name: 'Simult Risk %', type: 'text', line: 2, rules: 'double' },
+        STAKE_FIXED: { name: 'Stake Fixed', type: 'text', line: 3, rules: 'numeric' },
+        LEVERAGE: { name: 'Leverage', type: 'text', line: 3, rules: 'numeric' },
+        COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 4, rules: 'double' },
+        COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 4, rules: 'double' },
+        TAGS: { name: 'Tags', type: 'text', line: 5 },        
+        SYMBOLS: { name: 'Symbols', type: 'text', line: 6 },
+        STRATEGIES: { name: 'Strategies', type: 'text', line: 7 },
+        TIMEFRAMES: { name: 'Timeframes', type: 'text', line: 8 },
+        JSCODE: { name: 'Javascript code', type: 'textarea', line: 9 }
+    },
     orders: [],
     searchInput: '',
     selected: [],
@@ -228,6 +261,13 @@ export default {
     }
   }),
   methods: {
+    epFormOpen() {
+      this.$socket.emit('get_ep_params');
+    },
+    epFormSubmit() {
+      console.log('epFormSubmit called');
+      this.$socket.emit('set_ep_params',this.packFormData());
+    },
     makeEntryReal(item) {
       this.$socket.emit('make_real_entry',{ entryId: item.id });
       //this.loading = true;
@@ -278,6 +318,51 @@ export default {
         return false;
       }
       return true;
+    },
+    packFormData() {
+      let packed = { ... this.epFormData };
+
+      console.log('packed before:');
+      console.log(packed);
+
+      this.STRINGIFY_PARAMS.map( (k) => {
+        if (packed[k]) {
+          packed[k] = JSON.parse(packed[k]);
+        }
+      });
+
+      console.log('packed after STRINGIFY:');
+      console.log(packed);
+      
+      Object.keys(packed).map( (k) => {
+        if (is_numeric(packed[k])) {
+          packed[k] = Number(packed[k]);
+        }
+        else if ( ! String(packed[k]).trim() ) {
+          packed[k] = null;
+        } 
+      });
+
+      console.log('packed after NULLMENT:');
+      console.log(packed);
+
+      return packed;
+
+    },
+    parseFormData(data) {
+
+      this.epFormData = { ... data };
+
+      this.STRINGIFY_PARAMS.map( (k) => {
+        this.epFormData[k] = JSON.stringify(this.epFormData[k]);
+        if (this.epFormData[k] == 'null') {
+          this.epFormData[k] = '';
+        }
+      });
+
+      console.log('stringified formData:');
+      console.log(this.epFormData);
+
     }
 },
   sockets: {
@@ -285,6 +370,13 @@ export default {
         this.loading = false;  
         this.orders = data;
     },
+    ep_params(data) {
+      this.parseFormData(data);
+      this.epFormIsOpen = true;
+    },
+    ep_params_set() {
+      this.epFormIsOpen = false;
+    }
   },
   mounted() {
   },
