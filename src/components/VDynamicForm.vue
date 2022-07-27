@@ -110,12 +110,18 @@ Object.keys(rules).forEach(rule => {
 });
 */
 
-import { required, email, numeric, double } from "vee-validate/dist/rules";
+import { required, required_if, email, numeric, double } from "vee-validate/dist/rules";
 
 extend("required", {
   ...required,
   message: "{_field_} can not be empty",
 });
+
+extend("required_if", {
+  ...required_if,
+  message: "{_field_} can not be empty in this mode",
+});
+
 
 extend("email", {
   ...email,

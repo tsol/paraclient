@@ -231,10 +231,10 @@ export default {
     epFormData: { },
     epFormInputs: {
         START_SUM:  { name: 'Start USD', type: 'text', line: 1, rules: 'required|numeric' },
-        STAKE_MODE: { name: 'Stake Mode', type: 'select', props: { items: ['fixed','percent'] }, line: 1 },
-        STAKE_PERCENT: { name: 'Stake %', type: 'text', line: 2, rules: 'double' },
+        STAKE_MODE: { name: 'Stake Mode', type: 'select', props: { items: ['fixed','percent'] }, line: 1, rules: 'required' },
+        STAKE_PERCENT: { name: 'Stake %', type: 'text', line: 2, rules: 'double|required_if:STAKE_MODE,percent' },
         SIMULT_RISK_PERCENT: { name: 'Simult Risk %', type: 'text', line: 2, rules: 'double' },
-        STAKE_FIXED: { name: 'Stake Fixed', type: 'text', line: 3, rules: 'numeric' },
+        STAKE_FIXED: { name: 'Stake Fixed', type: 'text', line: 3, rules: 'numeric|required_if:STAKE_MODE,fixed' },
         LEVERAGE: { name: 'Leverage', type: 'text', line: 3, rules: 'numeric' },
         COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 4, rules: 'double' },
         COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 4, rules: 'double' },
