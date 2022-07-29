@@ -1,12 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex'
+
 import chart from './vuex_modules/chartWindow'
+import vm from './vuex_modules/vm';
 
 Vue.use(Vuex);
 
 let store = new Vuex.Store({
     modules: {
-        chart
+        chart, vm
     },
     state: {
     },

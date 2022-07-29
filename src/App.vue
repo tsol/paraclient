@@ -12,10 +12,10 @@
       <v-tab>Tickers</v-tab>
       <v-tab>Entries</v-tab>
       <v-tab>Orders</v-tab>
+      <v-tab>Report</v-tab>
 
      <!--
       <v-tab>Stats</v-tab>
-      <v-tab>Report</v-tab>
       <v-tab>Kotomon</v-tab>
     -->
     </v-tabs>
@@ -29,6 +29,9 @@
       </v-tab-item>
       <v-tab-item>
         <orders />
+      </v-tab-item>
+      <v-tab-item>
+        <orders-report />
       </v-tab-item>
 
 
@@ -54,6 +57,7 @@
 import Tickers from './components/Tickers.vue'
 import Entries from './components/Entries.vue';
 import Orders from './components/Orders.vue';
+import OrdersReport from './components/OrdersReport.vue';
 
 import ChartWindow from './components/ChartWindow.vue';
 
@@ -74,6 +78,7 @@ export default {
     Entries,
     Orders,
     ChartWindow,
+    OrdersReport
   }
 }
 </script>

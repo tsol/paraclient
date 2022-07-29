@@ -37,33 +37,6 @@
               ></v-select>
           </v-col>
 
-          <v-col cols="12" sm="1" md="1"> 
-            <v-text-field
-              v-model="filter.tag"
-              prepend-icon="mdi-variable"
-              label="Tag"
-              hide-details
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" sm="1" md="1"> 
-            <v-text-field
-              v-model="filter.tagValue"
-              prepend-icon="mdi-equal-box"
-              label="Value"
-              hide-details
-            ></v-text-field>
-          </v-col>
-
-          <v-col cols="12" sm="4" md="4"> 
-            <v-text-field
-              v-model="filter.eval"
-              prepend-icon="mdi-function-variant"
-              label="JS code"
-              hide-details
-            ></v-text-field>
-          </v-col>
-
       <v-col cols="12" sm="1" md="1">
  
         <v-btn @click="reload()">
@@ -78,7 +51,7 @@
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(report.length === 0)"
+      :loading="loading"
       :headers="headers"
       :items="report"
       item-key="id"
@@ -118,6 +91,7 @@ import RedGreen from './helpers/RedGreen.vue'
 export default {
   components: { RedGreen },
   data: () => ({
+    loading: false,
     report: [],
     search: '',
     selected: [],
@@ -129,14 +103,10 @@ export default {
     filter: {
        dateFrom: null,
        dateTo: null,
-       tag: '',
-       tagValue: '',
-       interval: 'm',
-       eval: null
+       interval: 'm'
     },
     headers: [      
         { text: 'Period', value: 'periodName', groupable: false },
-        { text: 'Src', value: 'src', groupable: false },
         { text: 'Count orders',   value: 'numOrders', groupable: false },
         { text: 'Ratio',  value: 'ratio', groupable: false },
         { text: 'Gain',  value: 'gain', groupable: false },
@@ -149,12 +119,14 @@ export default {
     reload() {
           console.log('sending report request')
           this.$socket.emit('get_orders_report',this.filter);
+          this.loading = true;
     }
 },
   sockets: {
     orders_report(data) {
       console.log('report received'); 
         this.report = data;
+        this.loading = false;
     }
   },
   mounted() {

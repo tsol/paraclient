@@ -12,7 +12,6 @@
       class="w-full max-w-lg"
     >
    
- 
       <form @submit.prevent="submit">
  
     <v-card-text>
@@ -148,6 +147,7 @@ import {
   VRangeSlider,
   VSwitch,
   VTextarea,
+  VAutocomplete,
   VRadio,
   VCol,
   VRow
@@ -191,7 +191,7 @@ export default {
     VTextarea,
     VRadio,
     ValidationProvider, ValidationObserver,
-    VCol,VRow
+    VCol,VRow,VAutocomplete
   },
   computed: {
     form: {

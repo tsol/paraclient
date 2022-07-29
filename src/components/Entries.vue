@@ -55,7 +55,7 @@
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(entries.length === 0) || loading"
+      :loading="loading"
       :headers="headers"
       :items="formatted_entries"
       item-key="id"

@@ -31,7 +31,7 @@
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(tickers.length === 0)"
+      :loading="loading"
       :headers="headers"
       :items="tickers"
       item-key="id"
@@ -66,6 +66,7 @@
 export default {
   components: {},
   data: () => ({
+    loading: false,
     isConnected: false,
     tickers: [],
     search: '',
@@ -88,7 +89,8 @@ export default {
         return od.toLocaleDateString('ru-RU')+' '+od.toLocaleTimeString('ru-RU');
     },
     reloadTickers() {
-        this.$socket.emit('list_tickers', '')
+        this.$socket.emit('list_tickers', '');
+        this.loading = true;
     },
   },
   sockets: {
@@ -96,6 +98,7 @@ export default {
     disconnect() { this.isConnected = false; },
     tickers(data) {
         this.tickers = data;
+        this.loading = false;
     },
   },
   mounted() {
