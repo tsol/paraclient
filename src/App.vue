@@ -61,7 +61,6 @@ import OrdersReport from './components/OrdersReport.vue';
 
 import ChartWindow from './components/ChartWindow.vue';
 
-
 /*
 import Kotomon from './components/Kotomon/Kotomon.vue'
 import OrderStats from './components/OrderStats.vue';
@@ -71,14 +70,16 @@ import OrdersReport from './components/OrdersReport.vue';
 export default {
   name: 'App',
   data: () => ({
-    tab: null
+    tab: null,
+    tags: { NYC: 'P', WRK: 'P' },
   }),
   components: {
     Tickers,
     Entries,
     Orders,
     ChartWindow,
-    OrdersReport
+    OrdersReport,
+
   }
 }
 </script>

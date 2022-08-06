@@ -25,7 +25,7 @@ export default {
     submit: null,
     cancel: null,
   },
-  STRINGIFY_PARAMS: ['TAGS'],
+  STRINGIFY_PARAMS: [],
   data: () => ({
     isOpen: false,
     formData: { },
@@ -121,7 +121,11 @@ export default {
         LEVERAGE: { name: 'Leverage', type: 'text', line: 3, rules: 'numeric' },
         COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 4, rules: 'double' },
         COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 4, rules: 'double' },
-        TAGS: { name: 'Tags', type: 'text', line: 5 },        
+        TAGS: { name: 'Tags', type: 'text', component: "v-tags-input", line: 5, 
+            props: {
+              filled: true
+            } 
+        },        
         SYMBOLS: { name: 'Symbols',  component: "v-autocomplete", line: 6,
             props: {
               items: this.symbols,
