@@ -35,7 +35,6 @@ export default {
       this.$socket.emit('get_ep_params');
       // todo: only first time?
       this.$store.dispatch('vm/queryAll');
-
     },
     formSubmit() {
       this.$socket.emit('set_ep_params',this.packFormData());
@@ -103,6 +102,11 @@ export default {
     }
   },
   computed: {
+    tags() {
+      let tags = {};
+      this.$store.state.vm.tags.forEach( t => tags[ t.name ] = t );
+      return tags;
+    },
     timeframes() {
         return this.$store.state.vm.timeframes;
     },
@@ -121,9 +125,11 @@ export default {
         LEVERAGE: { name: 'Leverage', type: 'text', line: 3, rules: 'numeric' },
         COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 4, rules: 'double' },
         COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 4, rules: 'double' },
-        TAGS: { name: 'Tags', type: 'text', component: "v-tags-input", line: 5, 
+        TAGS: { name: 'Tags', component: "v-tags-input", line: 5, 
             props: {
-              filled: true
+              avail: this.tags,
+              filled: true,
+              clearable: true
             } 
         },        
         SYMBOLS: { name: 'Symbols',  component: "v-autocomplete", line: 6,

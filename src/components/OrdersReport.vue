@@ -1,5 +1,8 @@
 <template>
 <v-card>
+
+    <ep-form ref="epForm" @submit="reload()" />
+
     <v-card-title>
          
       <v-row>
@@ -42,6 +45,22 @@
         <v-btn @click="reload()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
+
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              @click="$refs.epForm.open()"
+              color="blue"
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-cog-refresh</v-icon>
+            </v-btn>      
+          </template>
+          <span>Change settings / re-run entry plan</span>
+        </v-tooltip>
+
       </v-col>
 
       </v-row>
@@ -87,9 +106,10 @@
 
 <script>
 import RedGreen from './helpers/RedGreen.vue'
+import EpForm from './EpForm.vue'
 
 export default {
-  components: { RedGreen },
+  components: { RedGreen,EpForm },
   data: () => ({
     loading: false,
     report: [],
