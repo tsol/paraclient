@@ -4,6 +4,7 @@
 <v-dialog v-model="isOpen">
    <v-dynamic-form
     v-model="formData"
+    :loading="needOpen || needSubmit"
     :input-fields="formInputs"
     @submit="formSubmit"
     @cancel="formCancel"
@@ -25,20 +26,21 @@ export default {
     submit: null,
     cancel: null,
   },
-  STRINGIFY_PARAMS: [],
   data: () => ({
     isOpen: false,
+    needOpen: false,
+    needSubmit: false,
     formData: { },
   }),
   methods: {
     open() {
       this.$socket.emit('get_ep_params');
-      // todo: only first time?
       this.$store.dispatch('vm/queryAll');
+      this.needOpen = true;
     },
     formSubmit() {
       this.$socket.emit('set_ep_params',this.packFormData());
-      // then wait for set_params reply from sockets
+      this.needSubmit = true;
     },
     formCancel() {
         this.isOpen = false;
@@ -47,18 +49,6 @@ export default {
     packFormData() {
       let packed = { ... this.formData };
 
-      console.log('packed before:');
-      console.log(packed);
-
-      this.$options.STRINGIFY_PARAMS.map( (k) => {
-        if (packed[k]) {
-          packed[k] = JSON.parse(packed[k]);
-        }
-      });
-
-      console.log('packed after STRINGIFY:');
-      console.log(packed);
-      
       Object.keys(packed).map( (k) => {
         if (is_numeric(packed[k])) {
           packed[k] = Number(packed[k]);
@@ -68,37 +58,28 @@ export default {
         } 
       });
 
-      console.log('packed after NULLMENT:');
-      console.log(packed);
-
       return packed;
 
     },
     parseFormData(data) {
-
       this.formData = { ... data };
-
-      this.$options.STRINGIFY_PARAMS.map( (k) => {
-        this.formData[k] = JSON.stringify(this.formData[k]);
-        if (this.formData[k] == 'null') {
-          this.formData[k] = '';
-        }
-      });
-
-      console.log('stringified formData:');
-      console.log(this.formData);
-
     }
 
   },
   sockets: {
     ep_params(data) {
-      this.parseFormData(data);
-      this.isOpen = true;
+      if (this.needOpen) {
+        this.parseFormData(data);
+        this.isOpen = true;
+        this.needOpen = false;
+      }
     },
     ep_params_set() {
-      this.isOpen = false;
-      this.$emit('submit');
+      if (this.needSubmit) {
+        this.isOpen = false;
+        this.needSubmit = false;
+        this.$emit('submit');
+      }
     }
   },
   computed: {
@@ -119,12 +100,12 @@ export default {
     formInputs() { return {
         START_SUM:  { name: 'Start USD', type: 'text', line: 1, rules: 'required|numeric' },
         STAKE_MODE: { name: 'Stake Mode', type: 'select', props: { items: ['fixed','percent'] }, line: 1, rules: 'required' },
-        STAKE_PERCENT: { name: 'Stake %', type: 'text', line: 2, rules: 'double|required_if:STAKE_MODE,percent' },
+        STAKE_PERCENT: { name: 'Stake %', type: 'text', line: 1, rules: 'double|required_if:STAKE_MODE,percent' },
+        STAKE_FIXED: { name: 'Stake Fixed', type: 'text', line: 1, rules: 'numeric|required_if:STAKE_MODE,fixed' },
+        LEVERAGE: { name: 'Leverage', type: 'text', line: 2, rules: 'numeric' },
         SIMULT_RISK_PERCENT: { name: 'Simult Risk %', type: 'text', line: 2, rules: 'double' },
-        STAKE_FIXED: { name: 'Stake Fixed', type: 'text', line: 3, rules: 'numeric|required_if:STAKE_MODE,fixed' },
-        LEVERAGE: { name: 'Leverage', type: 'text', line: 3, rules: 'numeric' },
-        COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 4, rules: 'double' },
-        COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 4, rules: 'double' },
+        COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 2, rules: 'double' },
+        COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 2, rules: 'double' },
         TAGS: { name: 'Tags', component: "v-tags-input", line: 5, 
             props: {
               avail: this.tags,

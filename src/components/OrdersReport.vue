@@ -76,20 +76,7 @@
       item-key="id"
       :items-per-page="-1"
       class="elevation-1"
-      :search="search"
     >
-
-      <template v-slot:top>
-        
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-   
-      </template>
 
     <template v-slot:[`item.gain`]="{ item }">
       <red-green :value="item.gain" :greenAbove="0" />
@@ -113,7 +100,6 @@ export default {
   data: () => ({
     loading: false,
     report: [],
-    search: '',
     selected: [],
     intervals: [
       { value: 'd', text: 'DAY' },
