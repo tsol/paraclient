@@ -105,14 +105,7 @@ export default {
         LEVERAGE: { name: 'Leverage', type: 'text', line: 2, rules: 'numeric' },
         SIMULT_RISK_PERCENT: { name: 'Simult Risk %', type: 'text', line: 2, rules: 'double' },
         COST_BUY_PERCENT: { name: 'Buy Comission %', type: 'text', line: 2, rules: 'double' },
-        COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 2, rules: 'double' },
-        TAGS: { name: 'Tags', component: "v-tags-input", line: 5, 
-            props: {
-              avail: this.tags,
-              filled: true,
-              clearable: true
-            } 
-        },        
+        COST_SELL_PERCENT: { name: 'Sell Comission %', type: 'text', line: 2, rules: 'double' },        
         SYMBOLS: { name: 'Symbols',  component: "v-autocomplete", line: 6,
             props: {
               items: this.symbols,
@@ -124,7 +117,18 @@ export default {
               smallChips: true,
             }
         },
-        STRATEGIES: { name: 'Strategies',  component: "v-autocomplete", line: 7,
+        TIMEFRAMES: { name: 'Timeframes', component: "v-autocomplete", line: 6,
+            props: {
+              items: this.timeframes,
+              filled: true,
+              chips: true,
+              clearable: true,
+              deletableChips: true,
+              multiple: true,
+              smallChips: true,
+            }
+        },        
+        STRATEGIES: { name: 'Strategies',  component: "v-autocomplete", line: 6,
             props: {
               items: this.strategies,
               filled: true,
@@ -135,18 +139,19 @@ export default {
               smallChips: true,
             }
         },
-        TIMEFRAMES: { name: 'Timeframes', component: "v-autocomplete", line: 8,
+        TAGS: { name: 'Tags', component: "v-tags-input", line: 7, 
             props: {
-              items: this.timeframes,
+              avail: this.tags,
               filled: true,
-              chips: true,
-              clearable: true,
-              deletableChips: true,
-              multiple: true,
-              smallChips: true,
-            }
-        },
-        JSCODE: { name: 'Javascript code', type: 'textarea', line: 9 }
+              clearable: true
+            } 
+        },        
+        JSCODE: { name: 'Javascript code', type: 'textarea', line: 9,
+            props: {
+              filled: true,
+              clearable: true
+            } 
+        }
         };
     },
 
