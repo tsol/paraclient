@@ -121,7 +121,9 @@ export default {
             for (var p of this.$props.data) {
 
                 let candle = p[1];
-                let items = this.filterItems(candle.visualDebug);
+                if (! candle) { continue; }
+                
+                let items = this.filterItems(p[2]);
 
                 this.drawCircles(layout,ctx,items.filter( i => i.type === 'circle'));
                 this.drawLabels(layout,ctx,candle,items.filter( i => i.type === 'label'));

@@ -36,6 +36,7 @@ export default {
   props: {
       tickerId: String,
       candles: Array,
+      cdebug: Array,
       flags: Object,
       enabledSources: Array,
       moveTo: null
@@ -86,19 +87,18 @@ export default {
           ... this.onChart
         ],
         "offchart": [
-          /*{
+          {
             "name": "RSI 14",
             "type": "Range",
             "data": this.filterDebug('rsi14'),
             "settings": { }
-          },*/
-          /*{
+          },
+          {
             "name": "ATR 14",
             "type": "ATR",
             "data": this.filterDebug('atr14'),
             "settings": { }
           },
-          */
           {
             "name": "MACD",
             "type": "MACD",
@@ -114,13 +114,13 @@ export default {
         )
       },
       candleDebugData() {
-        let debugData = [];
-        this.candles.forEach( (candle) => {
-            if (candle.visualDebug.length > 0) {
-              debugData.push([candle.openTime, candle]);
-            }
+        return this.cdebug.map( cdb => {
+              let candle = this.candles.find( c => c.openTime === cdb.time );
+              if (! candle) {
+                console.log('cdb candle not found:', cdb.time, 'cdb entries:', cdb.entries)
+              }
+              return [cdb.time, candle, cdb.entries];
         });
-        return debugData;
       },
       vlevelsData()
       {
@@ -149,27 +149,20 @@ export default {
       this.width = document.documentElement.clientWidth-10;
       this.height = window.innerHeight * 0.8
     },
-    filterDebug(name) {
-      let data = [];
-      for (var candle of this.candles) {
-        candle.visualDebug.forEach( (vd) => {
-          if (vd.name === name) {
-            data.push([candle.openTime, vd.value]);
-          }
-        });
-      }
-      return data;
+    filterDebugFillWith(name, fnGetValuesArray) {
+      return this.cdebug.reduce( (res, cdb) => {
+          return [ ... res, 
+          ... cdb.entries
+              .filter( e => e.name === name )
+              .map( e => [ cdb.time, ... fnGetValuesArray(e) ])
+         ];
+      },[]);
+    },
+    filterDebug(name) { 
+      return this.filterDebugFillWith(name, e => [e.value]);
     },
     filterDebugMACD(name) {
-      let data = [];
-      for (var candle of this.candles) {
-        candle.visualDebug.forEach( (vd) => {
-          if (vd.name === name) {
-            data.push([candle.openTime, vd.value.h, vd.value.m, vd.value.s]);
-          }
-        });
-      }
-      return data;
+      return this.filterDebugFillWith(name, e => [e.value.h, e.value.m, e.value.s] );
     },
     hookOpen() {
         this.onChart = [];

@@ -4,6 +4,7 @@ export default {
         isOpen: false,
         tickerId: '',
         candles: [],
+        cdebug: [],
         flags: {},
         enabledSources: [],
         moveTo: null,
@@ -22,11 +23,16 @@ export default {
         setCandles(state, candles) {
             state.candles = candles;
         },
+        setCdebug(state, cdebug) {
+            state.cdebug = cdebug;
+        },
         setFlags(state, flags) {
-            state.flags = flags;
+            
+            state.flags = flags || {};
             if (! state.flags.vlevels_high ) {
                 state.flags.vlevels_high = [];
             }
+            console.log('SET FLAGS',state.flags);
         },
         setMoveTo(state, moveTo) {
             state.moveTo = moveTo;
@@ -65,7 +71,8 @@ export default {
             root: true,
             handler (context, data) {
                 context.commit('setTickerId',data.id);
-                context.commit('setCandles',data.candles);
+                context.commit('setCandles',data.candles)
+                context.commit('setCdebug',data.cdebug);
                 context.commit('openWindow',true);          
             }
         },

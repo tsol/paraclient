@@ -42,6 +42,7 @@
         <chart 
           :tickerId="tickerId"
           :candles="$store.state.chart.candles"
+          :cdebug="$store.state.chart.cdebug"
           :flags="$store.state.chart.flags"
           :enabledSources="enabledSources"
           :moveTo="$store.state.chart.moveTo"
