@@ -122,14 +122,16 @@ export default {
 
                 let candle = p[1];
                 if (! candle) { continue; }
-                
+
                 let items = this.filterItems(p[2]);
 
                 this.drawCircles(layout,ctx,items.filter( i => i.type === 'circle'));
                 this.drawLabels(layout,ctx,candle,items.filter( i => i.type === 'label'));
-                
+/*                
                 items.filter( i => i.type == 'entry' )
                     .forEach( item => this.drawEntryBox(layout,ctx,candle,item) );
+// moved to separate layout: Entries
+*/
                     
             }
 

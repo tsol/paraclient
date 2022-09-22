@@ -211,7 +211,7 @@ function fnum(number, precision) {
 export default {
   components: {  },
   data: () => ({
-    entries: [],
+    //entries: [],
     searchInput: '',
     selected: [],
     loading: false,
@@ -281,14 +281,16 @@ export default {
     }
 },
   sockets: {
-    entries(data) {
+    entries() {
         this.loading = false;  
-        this.entries = data;
     },
   },
   mounted() {
   },
   computed: {
+      entries() {
+        return this.$store.state.vm.entries || [];
+      },
       headers() {
         return [
         { text: 'RL', value: 'real', groupable: false },      

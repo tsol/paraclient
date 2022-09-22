@@ -29,7 +29,7 @@ import ValueBars from './overlays/ValueBars.vue'
 import ATR from './overlays/ATR.vue'
 import MACD from './overlays/MACD.vue'
 import BBANDS from './overlays/BBANDS.vue'
-
+import Entries from './overlays/Entries.vue'
 
 export default {
   components: { TradingVue },
@@ -39,10 +39,12 @@ export default {
       cdebug: Array,
       flags: Object,
       enabledSources: Array,
-      moveTo: null
+      moveTo: Number,
+      entry: Object,
+      entries: Array
   }, 
   data: () => ({
-      overlays: [ValueBars, CandleDebug, ATR, MACD, BBANDS ],
+      overlays: [ValueBars, CandleDebug, ATR, MACD, BBANDS, Entries ],
       colors: {
         colorBack: '#fff',
         colorGrid: '#eee',
@@ -54,6 +56,8 @@ export default {
   }),
   computed: {
       windowIsOpen() {
+        // todo: now this is not good. we only can have one chart per project with this
+        // why bother passing other params via props then...
         return this.$store.state.chart.isOpen;
       },
       chartData() {
@@ -73,6 +77,12 @@ export default {
             }
           },
           {
+            "name": "E",
+            "type": "Entries",
+            "data": this.entriesDataOnlyCurrent,
+            "settings": { }
+          },
+          {
             "name": "V",
             "type": "ValueBars",
             "data": [],
@@ -87,7 +97,7 @@ export default {
           ... this.onChart
         ],
         "offchart": [
-          {
+          /*{
             "name": "RSI 14",
             "type": "Range",
             "data": this.filterDebug('rsi14'),
@@ -98,7 +108,7 @@ export default {
             "type": "ATR",
             "data": this.filterDebug('atr14'),
             "settings": { }
-          },
+          },*/
           {
             "name": "MACD",
             "type": "MACD",
@@ -112,6 +122,34 @@ export default {
         return this.candles.map(
           (a) => [ a.openTime, a.open, a.high, a.low, a.close, a.volume ] 
         )
+      },
+      entriesDataOnlyCurrent() {
+        if (! this.entry ) { return [] }
+        const e = this.entry;
+        return [ 
+          [e.time, { 
+            entryPrice: e.entryPrice,
+            takeProfit: e.takeProfit,
+            stopLoss: e.stopLoss,        
+            openTime: e.time,
+            closeTime: e.closeTime || Date.now(),
+            text: e.strategy+'-'+e.timeframe
+          }]
+        ];
+      },
+      entriesDataSymbol() {
+        if (! this.entry || this.entries.length == 0 ) { return [] }
+        const ce = this.entry;
+        return this.entries.filter( e => e.symbol === ce.symbol).map( e =>
+          [e.time, { 
+            entryPrice: e.entryPrice,
+            takeProfit: e.takeProfit,
+            stopLoss: e.stopLoss,        
+            openTime: e.time,
+            closeTime: e.closeTime || Date.now(),
+            text: e.strategy+'-'+e.timeframe
+          }]
+        );
       },
       candleDebugData() {
         return this.cdebug.map( cdb => {

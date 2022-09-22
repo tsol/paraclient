@@ -13,11 +13,7 @@
           dark
           color="primary"
         >
-          <v-btn
-            icon
-            dark
-            @click="isOpen = false"
-          >
+          <v-btn icon dark @click="isOpen = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
 
@@ -29,13 +25,10 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
 
-            <v-btn
-              dark
-              text
-              @click="isOpen = false"
-            >
-              Close
-            </v-btn>
+          <v-btn icon dark @click="isOpen = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+
           </v-toolbar-items>
         </v-toolbar>
 
@@ -46,9 +39,10 @@
           :flags="$store.state.chart.flags"
           :enabledSources="enabledSources"
           :moveTo="$store.state.chart.moveTo"
+          :entry="$store.state.chart.entry"
+          :entries="entries"
         />
         
-
         <v-switch v-for="item in allSources" :key="item" 
           v-model="enabledSources"
           color="primary"
@@ -69,6 +63,9 @@ import Chart from './Chart.vue';
 
 export default {
     components: { Chart },
+    props: {
+      entries: Array
+    },
     data: () => ({
       allSources: 
         ['hoffman1','macdf','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
@@ -79,6 +76,7 @@ export default {
     methods: {
         refresh() {
             this.$socket.emit('get_chart', { tickerId: this.tickerId } )
+            // todo: fix when reload is hit in entry mode
         }
     },
     computed: {

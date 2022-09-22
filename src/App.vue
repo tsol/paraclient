@@ -3,7 +3,7 @@
 <v-app>
   <div>
 
-    <chart-window />
+    <chart-window :entries="entriesForChart" />
 
     <v-tabs v-model="tab"
         background-color="indigo"
@@ -73,13 +73,19 @@ export default {
     tab: null,
     tags: { NYC: 'P', WRK: 'P' },
   }),
+  computed: {
+    entriesForChart() {
+      const src = ( this.tab == 1 ? 
+          this.$store.state.vm.entries : this.$store.state.vm.orders );
+      return src || [];
+    }
+  },
   components: {
     Tickers,
     Entries,
     Orders,
     ChartWindow,
     OrdersReport,
-
   }
 }
 </script>

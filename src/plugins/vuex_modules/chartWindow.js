@@ -8,6 +8,7 @@ export default {
         flags: {},
         enabledSources: [],
         moveTo: null,
+        entry: null
     }),
     mutations: {
         openWindow(state, open) {
@@ -27,7 +28,6 @@ export default {
             state.cdebug = cdebug;
         },
         setFlags(state, flags) {
-            
             state.flags = flags || {};
             if (! state.flags.vlevels_high ) {
                 state.flags.vlevels_high = [];
@@ -39,12 +39,14 @@ export default {
         },
         resetMoveTo(state) {
             state.moveTo = null;
-        }
+        },
+        setEntry(state, entry) { state.entry = entry; },
     },
     actions: {
         openRecent(context,  tickerId )
         {
             context.commit('resetMoveTo');
+            context.commit('setEntry',null);
             this._vm.$socket.emit('get_chart', { tickerId: tickerId } );
             this._vm.$socket.emit('get_flags', { tickerId: tickerId } );
         },
@@ -64,6 +66,7 @@ export default {
             handler (context, entryData) {
                 if (entryData.flags) {
                     context.commit('setFlags',entryData.flags);
+                    context.commit('setEntry', entryData);
                 }          
             }
         },

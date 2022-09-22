@@ -215,7 +215,7 @@ function fnum(number, precision) {
 export default {
   components: { EpForm },
   data: () => ({
-    orders: [],
+    //orders: [],
     searchInput: '',
     selected: [],
     loading: false,
@@ -285,14 +285,16 @@ export default {
     },
 },
   sockets: {
-    orders(data) {
+    orders() {
         this.loading = false;  
-        this.orders = data;
     },
   },
   mounted() {
   },
   computed: {
+      orders() {
+        return this.$store.state.vm.orders || [];
+      },
       headers() {
         return [
         { text: 'RL', value: 'real', groupable: false },      

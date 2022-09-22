@@ -35,7 +35,7 @@ export default {
   methods: {
     open() {
       this.$socket.emit('get_ep_params');
-      this.$store.dispatch('vm/queryAll');
+      this.$store.dispatch('vm/queryParams');
       this.needOpen = true;
     },
     formSubmit() {

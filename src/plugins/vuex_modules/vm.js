@@ -4,7 +4,9 @@ export default {
         timeframes: [],
         symbols: [],
         strategies: [],
-        tags: []
+        tags: [],
+        orders: [],
+        entries: []
     }),
     mutations: {
        setTimeframes(state,timeframes) {
@@ -18,10 +20,12 @@ export default {
        },
        setTags(state,tags) {
         state.tags = tags;
-       }
+       },
+       setOrders(state,orders) { state.orders = orders },
+       setEntries(state,entries) { state.entries = entries }
     },
     actions: {
-        queryAll()
+        queryParams()
         {
             this._vm.$socket.emit('get_timeframes');
             this._vm.$socket.emit('get_symbols');
@@ -36,6 +40,11 @@ export default {
             { root: true, handler (context, data) { context.commit('setStrategies',data); } },
         SOCKET_tags:
             { root: true, handler (context, data) { context.commit('setTags',data); } },
+        SOCKET_orders:
+            { root: true, handler (context, data) { context.commit('setOrders',data); } },
+        SOCKET_entries:
+            { root: true, handler (context, data) { context.commit('setEntries',data); } },
+
         },
     getters: {
     }
