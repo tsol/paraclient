@@ -58,14 +58,19 @@
           <div>Only current entry</div>
         </template>
       </v-radio>
-      <v-radio value="symbol">
+      <v-radio value="strategy-timeframe">
         <template v-slot:label>
-          <div>All timeframes/strategies</div>
+          <div>Only current strategy + timeframe</div>
         </template>
       </v-radio>
       <v-radio value="strategy">
         <template v-slot:label>
-          <div>Only current strategy</div>
+          <div>Current strategy/all timeframes</div>
+        </template>
+      </v-radio>
+      <v-radio value="symbol">
+        <template v-slot:label>
+          <div>All timeframes/strategies</div>
         </template>
       </v-radio>
     </v-radio-group>

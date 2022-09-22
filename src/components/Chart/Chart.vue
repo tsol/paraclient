@@ -144,6 +144,16 @@ export default {
           )
           .map( e => this.entryFormatForLayout(e) );
       },
+      entriesDataStrategyTimeframe() {
+        if (! this.entry || this.entries.length == 0 ) { return [] }
+        return this.entries
+          .filter( e => 
+                (e.symbol === this.entry.symbol) 
+            && (e.strategy === this.entry.strategy)
+            && (e.timeframe === this.entry.timeframe)
+          )
+          .map( e => this.entryFormatForLayout(e) );
+      },
       entriesData() {
         if (this.config.entryMode === 'current')
           return this.entriesDataOnlyCurrent;
@@ -151,6 +161,8 @@ export default {
           return this.entriesDataSymbol;
         if (this.config.entryMode === 'strategy')
           return this.entriesDataStrategy;
+        if (this.config.entryMode === 'strategy-timeframe')
+          return this.entriesDataStrategyTimeframe;
         return [];
       },
       candleDebugData() {
