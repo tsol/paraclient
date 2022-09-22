@@ -128,38 +128,29 @@ export default {
       },
       entriesDataOnlyCurrent() {
         if (! this.entry ) { return [] }
-        const e = this.entry;
-        return [ 
-          [e.time, { 
-            entryPrice: e.entryPrice,
-            takeProfit: e.takeProfit,
-            stopLoss: e.stopLoss,        
-            openTime: e.time,
-            closeTime: e.closeTime || Date.now(),
-            text: e.strategy+'-'+e.timeframe
-          }]
-        ];
+        return [ this.entryFormatForLayout(this.entry) ];
       },
       entriesDataSymbol() {
         if (! this.entry || this.entries.length == 0 ) { return [] }
-        const ce = this.entry;
-        return this.entries.filter( e => e.symbol === ce.symbol).map( e =>
-          [e.time, { 
-            entryPrice: e.entryPrice,
-            takeProfit: e.takeProfit,
-            stopLoss: e.stopLoss,        
-            openTime: e.time,
-            closeTime: e.closeTime || Date.now(),
-            text: e.strategy+'-'+e.timeframe
-          }]
-        );
+        return this.entries
+          .filter( e => e.symbol === this.entry.symbol)
+          .map( e => this.entryFormatForLayout(e) );
+      },
+      entriesDataStrategy() {
+        if (! this.entry || this.entries.length == 0 ) { return [] }
+        return this.entries
+          .filter( e => 
+            (e.symbol === this.entry.symbol) && (e.strategy === this.entry.strategy)
+          )
+          .map( e => this.entryFormatForLayout(e) );
       },
       entriesData() {
-        console.log('entriesData', this.config)
         if (this.config.entryMode === 'current')
           return this.entriesDataOnlyCurrent;
         if (this.config.entryMode === 'symbol')
           return this.entriesDataSymbol;
+        if (this.config.entryMode === 'strategy')
+          return this.entriesDataStrategy;
         return [];
       },
       candleDebugData() {
@@ -186,6 +177,16 @@ export default {
       }
   },
   methods: {
+    entryFormatForLayout(entry) {
+          return [entry.time, { 
+            entryPrice: entry.entryPrice,
+            takeProfit: entry.takeProfit,
+            stopLoss: entry.stopLoss,        
+            openTime: entry.time,
+            closeTime: entry.closeTime || Date.now(),
+            text: entry.strategy+'-'+entry.timeframe
+          }]
+    },
     plot(name,color) {
       this.onChart.push({
             "name": name,
