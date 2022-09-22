@@ -59,7 +59,7 @@ import Entries from './components/Entries.vue';
 import Orders from './components/Orders.vue';
 import OrdersReport from './components/OrdersReport.vue';
 
-import ChartWindow from './components/ChartWindow.vue';
+import ChartWindow from './components/Chart/ChartWindow.vue';
 
 /*
 import Kotomon from './components/Kotomon/Kotomon.vue'

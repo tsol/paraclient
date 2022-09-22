@@ -17,7 +17,7 @@
 
 <script>
 
-import VDynamicForm from './VDynamicForm.vue'
+import VDynamicForm from './Forms/VDynamicForm.vue'
 import {is_numeric} from './helpers/numeric.js'
 
 export default {

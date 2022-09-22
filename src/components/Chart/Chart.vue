@@ -1,7 +1,7 @@
 <template>
   <div>    
       
-    <trading-vue
+   <trading-vue
       ref="tradingVue"
       :width="this.width"
       :height="this.height"
@@ -14,9 +14,11 @@
       :color-text="colors.colorText"
       >
       </trading-vue>
- 
+
+
+    <!--
     <div> Candles: {{ candles.length }}, Flags: {{ flagsList }} </div>
- 
+    -->
  
   </div>
 </template>
@@ -41,7 +43,8 @@ export default {
       enabledSources: Array,
       moveTo: Number,
       entry: Object,
-      entries: Array
+      entries: Array,
+      config: Object
   }, 
   data: () => ({
       overlays: [ValueBars, CandleDebug, ATR, MACD, BBANDS, Entries ],
@@ -79,7 +82,7 @@ export default {
           {
             "name": "E",
             "type": "Entries",
-            "data": this.entriesDataOnlyCurrent,
+            "data": this.entriesData,
             "settings": { }
           },
           {
@@ -150,6 +153,14 @@ export default {
             text: e.strategy+'-'+e.timeframe
           }]
         );
+      },
+      entriesData() {
+        console.log('entriesData', this.config)
+        if (this.config.entryMode === 'current')
+          return this.entriesDataOnlyCurrent;
+        if (this.config.entryMode === 'symbol')
+          return this.entriesDataSymbol;
+        return [];
       },
       candleDebugData() {
         return this.cdebug.map( cdb => {

@@ -13,9 +13,8 @@
           dark
           color="primary"
         >
-          <v-btn icon dark @click="isOpen = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
+
+          <chart-tools :config="config" @apply="toolsCfgApply"/>
 
           <v-btn icon dark @click="refresh()">
               <v-icon>mdi-reload</v-icon>  
@@ -41,6 +40,7 @@
           :moveTo="$store.state.chart.moveTo"
           :entry="$store.state.chart.entry"
           :entries="entries"
+          :config="config"
         />
         
         <v-switch v-for="item in allSources" :key="item" 
@@ -60,13 +60,17 @@
 <script>
 
 import Chart from './Chart.vue';
+import ChartTools from './ChartTools.vue'
 
 export default {
-    components: { Chart },
+    components: { Chart, ChartTools },
     props: {
       entries: Array
     },
     data: () => ({
+      config: {
+        entryMode: 'current'
+      },
       allSources: 
         ['hoffman1','macdf','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
         'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','geroflvl',
@@ -74,10 +78,14 @@ export default {
       enabledSources: []
     }),
     methods: {
-        refresh() {
-            this.$socket.emit('get_chart', { tickerId: this.tickerId } )
-            // todo: fix when reload is hit in entry mode
-        }
+      toolsCfgApply(cfg) {
+        console.log('applied config: ',cfg)
+        this.config = cfg;
+      },
+      refresh() {
+        this.$socket.emit('get_chart', { tickerId: this.tickerId } )
+        // todo: fix when reload is hit in entry mode
+      }
     },
     computed: {
         tickerId() { return this.$store.state.chart.tickerId; }, 

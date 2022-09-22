@@ -97,7 +97,7 @@
 
 <script>
 
-import VTagsInput from './Forms/VTagsInput.vue'
+import VTagsInput from './VTagsInput.vue'
 
 // eslint-disable-next-line no-unused-vars
 import { extend, setInteractionMode } from "vee-validate";
