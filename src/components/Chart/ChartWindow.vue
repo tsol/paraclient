@@ -50,12 +50,10 @@
           :value="item"
         ></v-switch>
 
-
       </v-card>
     </v-dialog>
   </v-row>
 </template>
-
 
 <script>
 
@@ -104,4 +102,3 @@ export default {
 
 }
 </script>
-
