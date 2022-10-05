@@ -1,8 +1,7 @@
-
 <template>
 <v-card>
     <v-card-title>
-        
+
         <v-btn @click="reload()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
@@ -16,11 +15,12 @@
         </v-btn>
 -->
         <v-spacer></v-spacer>
-        
-        <div> symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b></div>
- 
+
+        <div> symbols: <b> {{ this.countSymbols }} </b>,
+          gain: <b>{{ this.sumSelectedGain }}</b></div>
+
        <v-spacer></v-spacer>
- 
+
     </v-card-title>
 
     <v-data-table
@@ -34,31 +34,31 @@
       class="elevation-1"
       :search="search"
       @current-items="gotFiltered"
-   
+
     >
 
       <template v-slot:top>
-        
+
         <v-row>
           <v-col cols="12" sm="2" md="2">
             <InputDate
-              defaultValue="" 
+              defaultValue=""
               id="dateFrom"
               label="С даты"
               @dateSelected="(e) => filterSetValue(e.id, e.value)"
-            /> 
+            />
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
             <InputDate
-              defaultValue="" 
+              defaultValue=""
               id="dateTo"
               label="По дату"
               @dateSelected="(e) => filterSetValue(e.id, e.value)"
-            /> 
+            />
           </v-col>
 
-          <v-col cols="12" sm="2" md="2"> 
+          <v-col cols="12" sm="2" md="2">
             <v-text-field
               v-model="filter.symbol"
               prepend-icon="mdi-currency-usd"
@@ -68,7 +68,7 @@
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="2" md="2"> 
+          <v-col cols="12" sm="2" md="2">
             <v-text-field
               v-model="filter.strategy"
               prepend-icon="mdi-robot"
@@ -79,7 +79,7 @@
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
- 
+
             <v-text-field
               v-model="search"
               append-icon="mdi-magnify"
@@ -91,7 +91,7 @@
           </v-col>
 
         </v-row>
-        
+
       </template>
 
     <template v-slot:[`item.gain`]="{ item }">
@@ -122,13 +122,13 @@
       </div>
     </template>
 
-    </v-data-table> 
+    </v-data-table>
 </v-card>
 </template>
 
 <script>
-import InputDate from './helpers/InputDate.vue'
-import RedGreen from './helpers/RedGreen.vue'
+import InputDate from './helpers/InputDate.vue';
+import RedGreen from './helpers/RedGreen.vue';
 
 export default {
   components: { InputDate, RedGreen },
@@ -139,92 +139,100 @@ export default {
     search: '',
     selected: [],
     filter: {
-       dateFrom: null,
-       dateTo: null,
-       strategy: null,
-       timeframe: null,
-       symbol: null
-    }
+      dateFrom: null,
+      dateTo: null,
+      strategy: null,
+      timeframe: null,
+      symbol: null,
+    },
   }),
   methods: {
     filterSetValue(id, value) {
-      console.log('filterSetValue '+id+' = '+value);
-      this.filter[ id ] = value;
+      console.log(`filterSetValue ${id} = ${value}`);
+      this.filter[id] = value;
       console.log(this.filter);
     },
-    gotFiltered(e){
+    gotFiltered(e) {
       this.filteredItems = e;
     },
     reload() {
-          this.$socket.emit('get_orders_stats',{
-            fromTimestamp: this.filterDateFromTimestamp,
-            toTimestamp: this.filterDateToTimestamp
-          });
+      this.$socket.emit('get_orders_stats', {
+        fromTimestamp: this.filterDateFromTimestamp,
+        toTimestamp: this.filterDateToTimestamp,
+      });
     },
     restartTickers(runLive) {
-          this.$socket.emit('restart_all',{ runLive: runLive });
+      this.$socket.emit('restart_all', { runLive });
     },
     dateFromUnix(unixtime) {
-        let od = new Date(unixtime);
-        return od.toLocaleDateString('ru-RU')+' '+od.toLocaleTimeString('ru-RU');
+      const od = new Date(unixtime);
+      return `${od.toLocaleDateString('ru-RU')} ${od.toLocaleTimeString('ru-RU')}`;
     },
     dateToUnix(dateString) {
-        if (! dateString ) { return null; }
-        const date = new Date(dateString);
-        return date.getTime();
-    }
-},
+      if (!dateString) { return null; }
+      const date = new Date(dateString);
+      return date.getTime();
+    },
+  },
   sockets: {
-    orders_stats(data) {  
-        this.timeframes = data.timeframes;
-        this.orderStats = data.stats;
+    orders_stats(data) {
+      this.timeframes = data.timeframes;
+      this.orderStats = data.stats;
     },
   },
   mounted() {
   },
   computed: {
-      headers() {
+    headers() {
+      const headers = [
+        {
+          text: 'Symbol',
+          value: 'symbol',
+          groupable: true,
+          filter: (v) => {
+            if (!this.filter.symbol) return true;
+            return (v.includes(this.filter.symbol));
+          },
+        },
+        {
+          text: 'Strategy',
+          value: 'strategy',
+          groupable: true,
+          filter: (v) => {
+            if (!this.filter.strategy) return true;
+            return (v.includes(this.filter.strategy));
+          },
+        },
+        { text: 'Gain', value: 'gain', groupable: false },
+        { text: 'Ratio', value: 'ratio', groupable: false },
+        { text: 'Entries', value: 'entries', groupable: false },
+      ];
 
-        let headers = [      
-        { text: 'Symbol', value: 'symbol', groupable: true,
-              filter: (v) => { 
-                  if (!this.filter.symbol) return true;
-                  return (v.includes(this.filter.symbol));
-              }},
-        { text: 'Strategy', value: 'strategy', groupable: true,
-              filter: (v) => { 
-                  if (!this.filter.strategy) return true;
-                  return (v.includes(this.filter.strategy));
-              } },
-        { text: 'Gain',  value: 'gain', groupable: false },
-        { text: 'Ratio',  value: 'ratio', groupable: false },
-        { text: 'Entries',   value: 'entries', groupable: false },
-        ];
+      this.timeframes.forEach((t) => {
+        headers.push({ text: `${t}:G`, value: `${t}_gain`, groupable: false });
+        headers.push({ text: `${t}:R`, value: `${t}_ratio`, groupable: false });
+        headers.push({ text: `${t}:E`, value: `${t}_entries`, groupable: false });
+      });
 
-        this.timeframes.forEach( (t) => {
-          headers.push({ text: t+':G', value: t+'_gain', groupable: false });
-          headers.push({ text: t+':R', value: t+'_ratio', groupable: false });
-          headers.push({ text: t+':E', value: t+'_entries', groupable: false });
-        })
-
-        return headers;
-      },
-      filterDateFromTimestamp() {
-        return this.dateToUnix(this.filter.dateFrom+' 00:00:00');
-      },
-      filterDateToTimestamp() {
-        return this.dateToUnix(this.filter.dateTo+' 23:59:59');
-      },
-      countSymbols() {
-        let uniq = {};
-        this.filteredItems.forEach( fi => uniq[ fi.symbol ] = 1 );
-        return Object.keys(uniq).length;
-      },
-      sumSelectedGain() {
-         return this.filteredItems.reduce( (p,c) => p + c.gain, 0).toFixed(2);
-      },
-  }
-}
+      return headers;
+    },
+    filterDateFromTimestamp() {
+      return this.dateToUnix(`${this.filter.dateFrom} 00:00:00`);
+    },
+    filterDateToTimestamp() {
+      return this.dateToUnix(`${this.filter.dateTo} 23:59:59`);
+    },
+    countSymbols() {
+      const uniq = {};
+      // eslint-disable-next-line no-return-assign
+      this.filteredItems.forEach((fi) => uniq[fi.symbol] = 1);
+      return Object.keys(uniq).length;
+    },
+    sumSelectedGain() {
+      return this.filteredItems.reduce((p, c) => p + c.gain, 0).toFixed(2);
+    },
+  },
+};
 </script>
 
 <style>

@@ -6,19 +6,19 @@
                 class="ma-2" color="green" text-color="white"
             >
                 connected
-            </v-chip>      
+            </v-chip>
             <v-chip v-else
                 class="ma-2" color="red" text-color="white"
             >
                 disconnected
-            </v-chip> 
+            </v-chip>
         </div>
         <v-btn @click="reloadTickers()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
 
         <v-spacer></v-spacer>
-        
+
         <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
@@ -56,8 +56,7 @@
           {{ dateFromUnix(item.lastTimestamp) }}
         </template>
 
-
-    </v-data-table> 
+    </v-data-table>
 </v-card>
 </template>
 
@@ -72,33 +71,33 @@ export default {
     search: '',
     selected: [],
     headers: [
-        { text: 'id', value: 'id', groupable: false },
-        { text: 'Symbol', value: 'symbol', groupable: true },
-        { text: 'Time', value: 'timeframe', groupable: false },
-        { text: 'Limit', value: 'limit', groupable: false },      
-        { text: 'Live', value: 'isLive', groupable: false },      
-        { text: 'From', value: 'firstTimestamp', groupable: false },      
-        { text: 'To', value: 'lastTimestamp', groupable: false },      
+      { text: 'id', value: 'id', groupable: false },
+      { text: 'Symbol', value: 'symbol', groupable: true },
+      { text: 'Time', value: 'timeframe', groupable: false },
+      { text: 'Limit', value: 'limit', groupable: false },
+      { text: 'Live', value: 'isLive', groupable: false },
+      { text: 'From', value: 'firstTimestamp', groupable: false },
+      { text: 'To', value: 'lastTimestamp', groupable: false },
 
-],
+    ],
   }),
 
   methods: {
     dateFromUnix(unixtime) {
-        let od = new Date(unixtime);
-        return od.toLocaleDateString('ru-RU')+' '+od.toLocaleTimeString('ru-RU');
+      const od = new Date(unixtime);
+      return `${od.toLocaleDateString('ru-RU')} ${od.toLocaleTimeString('ru-RU')}`;
     },
     reloadTickers() {
-        this.$socket.emit('list_tickers', '');
-        this.loading = true;
+      this.$socket.emit('list_tickers', '');
+      this.loading = true;
     },
   },
   sockets: {
     connect() { this.isConnected = true; },
     disconnect() { this.isConnected = false; },
     tickers(data) {
-        this.tickers = data;
-        this.loading = false;
+      this.tickers = data;
+      this.loading = false;
     },
   },
   mounted() {
@@ -106,8 +105,8 @@ export default {
   },
   computed: {
 
-  }
-}
+  },
+};
 </script>
 
 <style>

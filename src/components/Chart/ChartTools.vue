@@ -6,15 +6,15 @@
       :nudge-width="200"
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn 
+        <v-btn
             icon
-            dark 
+            dark
             v-bind="attrs"
             v-on="on"
         >
             <v-icon>mdi-cog-outline</v-icon>
         </v-btn>
-        
+
       </template>
 
       <v-card>
@@ -47,7 +47,6 @@
         </v-list>
         -->
 
-
 <v-container fluid>
     <v-radio-group v-model="cfg.entryMode">
       <template v-slot:label>
@@ -78,7 +77,6 @@
 
 <!--
         <v-divider></v-divider>
-
 
         <v-list>
           <v-list-item>
@@ -117,31 +115,29 @@
   </div>
 </template>
 
-
 <script>
-  export default {
-    props: {
-        config: Object
+export default {
+  props: {
+    config: Object,
+  },
+  data: () => ({
+    menu: false,
+    cfg: {
+      entryMode: 'current',
     },
-    data: () => ({
-        menu: false,
-        cfg: {
-            entryMode: 'current'
-        }
-    }),
-    methods: {
-        doApply() {
-            this.menu = false;
-            this.$emit('apply',this.cfg);
-        }
+  }),
+  methods: {
+    doApply() {
+      this.menu = false;
+      this.$emit('apply', this.cfg);
     },
-    watch: {
-        menu: function (isOpen) {
-            if (! isOpen ) { return; }
-            this.cfg = { ... this.config };
-        } 
+  },
+  watch: {
+    menu(isOpen) {
+      if (!isOpen) { return; }
+      this.cfg = { ...this.config };
     },
+  },
 
-  }
+};
 </script>
-

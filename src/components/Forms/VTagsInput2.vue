@@ -8,7 +8,9 @@
             <input ref="upload" type="file" @change="handleInput" v-show="false" accept=".pdf">
             <div class="content-wrapper text-center">
                 <v-icon :size="50" class="mb-1">far fa-cloud-upload</v-icon>
-                <div v-if="files.length === 0">Drag a PDF into this box, or click on it to upload a file</div>
+                <div v-if="files.length === 0">
+                    Drag a PDF into this box, or click on it to upload a file
+                </div>
                 <div v-else> {{files.length}} file{{files.length > 1 ? 's' : ''}} chosen</div>
             </div>
         </div>
@@ -17,51 +19,52 @@
 </template>
 
 <script>
-import VInput from 'vuetify/lib/components/VInput/VInput.js';
+import VInput from 'vuetify/lib/components/VInput/VInput';
+
 export default {
-    name: 'VTagsInput',
-    extends: VInput,
-    props: {
-        value: {
-            required: false,
-            type: [Array, FileList],
-        },
+  name: 'VTagsInput',
+  extends: VInput,
+  props: {
+    value: {
+      required: false,
+      type: [Array, FileList],
     },
-    watch: {
-        value: {
-            immediate: true,
-            deep: true,
-            handler(value) {
-                if (value) {
-                    this.files = value;
-                }
-            },
-        },
+  },
+  watch: {
+    value: {
+      immediate: true,
+      deep: true,
+      handler(value) {
+        if (value) {
+          this.files = value;
+        }
+      },
     },
-    data() {
-        return {
-            files: [],
-        };
+  },
+  data() {
+    return {
+      files: [],
+    };
+  },
+  methods: {
+    handleDrop(e) {
+      const { files } = e.dataTransfer;
+      this.handleFiles(files);
     },
-    methods: {
-        handleDrop(e) {
-            let files = e.dataTransfer.files;
-            this.handleFiles(files);
-        },
-        handleInput(e) {
-            let files = e.target.files;
-            this.handleFiles(files);
-        },
-        handleFiles(files) {
-            if (files.length > 0) {
-                this.files = files;
-                this.$emit('input', files);
-            }
-        },
-        reset() {
-            this.files = [];
-        },
+    handleInput(e) {
+      const { files } = e.target;
+      this.handleFiles(files);
     },
+    handleFiles(files) {
+      if (files.length > 0) {
+        this.files = files;
+        this.$emit('input', files);
+      }
+    },
+    reset() {
+      this.files = [];
+    },
+  },
 };
 </script>
 

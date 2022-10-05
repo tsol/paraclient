@@ -17,10 +17,10 @@
                 v-bind="attrs"
                 v-on="on"
                 @click:clear="emitValue('');"
-                
+
             ></v-text-field>
         </template>
-        
+
         <v-date-picker
             locale="ru-RU"
             v-model="inputValue"
@@ -37,7 +37,7 @@
 import Vue from 'vue'
 import DatetimePicker from 'vuetify-datetime-picker'
 // (Optional) import 'vuetify-datetime-picker/src/stylus/main.styl'
- 
+
 Vue.use(DatetimePicker)
 */
 
@@ -46,24 +46,24 @@ export default {
   props: {
     id: String,
     label: String,
-    defaultValue: String
+    defaultValue: String,
   },
   data: () => ({
     menuOpen: false,
-    inputValue: null
+    inputValue: null,
   }),
   methods: {
     emitValue(valueToEmit) {
       this.$emit('dateSelected', { id: this.id, value: valueToEmit });
       this.menuOpen = false;
-    }
+    },
   },
   mounted() {
     this.inputValue = this.defaultValue;
   },
   computed: {
-  }
-}
+  },
+};
 </script>
 
 <style>

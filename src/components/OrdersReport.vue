@@ -4,7 +4,7 @@
     <ep-form ref="epForm" @submit="reload()" />
 
     <v-card-title>
-         
+
       <v-row>
           <v-col cols="12" sm="2" md="2">
             <v-datetime-picker
@@ -41,11 +41,10 @@
           </v-col>
 
       <v-col cols="12" sm="1" md="1">
- 
+
         <v-btn @click="reload()">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
-
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -56,7 +55,7 @@
               v-on="on"
             >
               <v-icon>mdi-cog-refresh</v-icon>
-            </v-btn>      
+            </v-btn>
           </template>
           <span>Change settings / re-run entry plan</span>
         </v-tooltip>
@@ -86,17 +85,16 @@
       <red-green :value="item.ratio" :greenAbove="49.99" />
     </template>
 
-
-    </v-data-table> 
+    </v-data-table>
 </v-card>
 </template>
 
 <script>
-import RedGreen from './helpers/RedGreen.vue'
-import EpForm from './EpForm.vue'
+import RedGreen from './helpers/RedGreen.vue';
+import EpForm from './EpForm.vue';
 
 export default {
-  components: { RedGreen,EpForm },
+  components: { RedGreen, EpForm },
   data: () => ({
     loading: false,
     report: [],
@@ -104,42 +102,42 @@ export default {
     intervals: [
       { value: 'd', text: 'DAY' },
       { value: 'm', text: 'MONTH' },
-      { value: 'h', text: 'HOUR' }
+      { value: 'h', text: 'HOUR' },
     ],
     filter: {
-       dateFrom: null,
-       dateTo: null,
-       interval: 'm'
+      dateFrom: null,
+      dateTo: null,
+      interval: 'm',
     },
-    headers: [      
-        { text: 'Period', value: 'periodName', groupable: false },
-        { text: 'Count orders',   value: 'numOrders', groupable: false },
-        { text: 'Ratio',  value: 'ratio', groupable: false },
-        { text: 'Gain',  value: 'gain', groupable: false },
-        { text: 'Min gain',  value: 'minGain', groupable: false },
-        { text: 'Max gain',  value: 'maxGain', groupable: false },
-        { text: 'Max open',  value: 'maxOpenOrders', groupable: false }
-    ]
+    headers: [
+      { text: 'Period', value: 'periodName', groupable: false },
+      { text: 'Count orders', value: 'numOrders', groupable: false },
+      { text: 'Ratio', value: 'ratio', groupable: false },
+      { text: 'Gain', value: 'gain', groupable: false },
+      { text: 'Min gain', value: 'minGain', groupable: false },
+      { text: 'Max gain', value: 'maxGain', groupable: false },
+      { text: 'Max open', value: 'maxOpenOrders', groupable: false },
+    ],
   }),
   methods: {
     reload() {
-          console.log('sending report request')
-          this.$socket.emit('get_orders_report',this.filter);
-          this.loading = true;
-    }
-},
+      console.log('sending report request');
+      this.$socket.emit('get_orders_report', this.filter);
+      this.loading = true;
+    },
+  },
   sockets: {
     orders_report(data) {
-      console.log('report received'); 
-        this.report = data;
-        this.loading = false;
-    }
+      console.log('report received');
+      this.report = data;
+      this.loading = false;
+    },
   },
   mounted() {
   },
   computed: {
-  }
-}
+  },
+};
 </script>
 
 <style>

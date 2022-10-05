@@ -7,7 +7,7 @@
       transition="dialog-bottom-transition"
       eager
     >
-      
+
       <v-card>
         <v-toolbar
           dark
@@ -17,7 +17,7 @@
           <chart-tools :config="config" @apply="toolsCfgApply"/>
 
           <v-btn icon dark @click="refresh()">
-              <v-icon>mdi-reload</v-icon>  
+              <v-icon>mdi-reload</v-icon>
           </v-btn>
 
           <v-toolbar-title> {{ tickerId }}</v-toolbar-title>
@@ -31,7 +31,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <chart 
+        <chart
           :tickerId="tickerId"
           :candles="$store.state.chart.candles"
           :cdebug="$store.state.chart.cdebug"
@@ -42,8 +42,8 @@
           :entries="entries"
           :config="config"
         />
-        
-        <v-switch v-for="item in allSources" :key="item" 
+
+        <v-switch v-for="item in allSources" :key="item"
           v-model="enabledSources"
           color="primary"
           :label="item"
@@ -57,48 +57,47 @@
 
 <script>
 
-import Chart from './Chart.vue';
-import ChartTools from './ChartTools.vue'
+import Chart from './MyChart.vue';
+import ChartTools from './ChartTools.vue';
 
 export default {
-    components: { Chart, ChartTools },
-    props: {
-      entries: Array
+  components: { Chart, ChartTools },
+  props: {
+    entries: Array,
+  },
+  data: () => ({
+    config: {
+      entryMode: 'current',
     },
-    data: () => ({
-      config: {
-        entryMode: 'current'
-      },
-      allSources: 
-        ['hoffman1','macdf','extremum','wfractals','mac20','hl_trend','hills','vlevels','cdlpatts',
-        'cma3buy','cma3sell','dblbottom','dbltop','macwfma','tpcwfma','ttcwoff','geroflvl',
-        'entries'],
-      enabledSources: []
-    }),
-    methods: {
-      toolsCfgApply(cfg) {
-        console.log('applied config: ',cfg)
-        this.config = cfg;
-      },
-      refresh() {
-        this.$socket.emit('get_chart', { tickerId: this.tickerId } )
-        // todo: fix when reload is hit in entry mode
-      }
+    allSources:
+        ['hoffman1', 'macdf', 'extremum', 'wfractals', 'mac20', 'hl_trend', 'hills', 'vlevels', 'cdlpatts',
+          'cma3buy', 'cma3sell', 'dblbottom', 'dbltop', 'macwfma', 'tpcwfma', 'ttcwoff', 'geroflvl',
+          'entries'],
+    enabledSources: [],
+  }),
+  methods: {
+    toolsCfgApply(cfg) {
+      console.log('applied config: ', cfg);
+      this.config = cfg;
     },
-    computed: {
-        tickerId() { return this.$store.state.chart.tickerId; }, 
-        isOpen: {
-            get: function ()  { return this.$store.state.chart.isOpen; },
-            set: function (v) { this.$store.commit('chart/openWindow',v); }
-        }        
+    refresh() {
+      this.$socket.emit('get_chart', { tickerId: this.tickerId });
+      // todo: fix when reload is hit in entry mode
     },
-    watch: {
-        isOpen: function (newV) {
-          if (! newV ) { return; }
-          this.enabledSources = this.$store.state.chart.enabledSources;  
-        }
+  },
+  computed: {
+    tickerId() { return this.$store.state.chart.tickerId; },
+    isOpen: {
+      get() { return this.$store.state.chart.isOpen; },
+      set(v) { this.$store.commit('chart/openWindow', v); },
     },
+  },
+  watch: {
+    isOpen(newV) {
+      if (!newV) { return; }
+      this.enabledSources = this.$store.state.chart.enabledSources;
+    },
+  },
 
-
-}
+};
 </script>

@@ -1,4 +1,3 @@
-
 <template>
 <v-app>
   <div>
@@ -34,7 +33,6 @@
         <orders-report />
       </v-tab-item>
 
-
       <!--
       <v-tab-item>
         <order-stats />
@@ -54,9 +52,9 @@
 
 <script>
 
-import Tickers from './components/Tickers.vue'
-import Entries from './components/Entries.vue';
-import Orders from './components/Orders.vue';
+import Tickers from './components/ListTickers.vue';
+import Entries from './components/ListEntries.vue';
+import Orders from './components/ListOrders.vue';
 import OrdersReport from './components/OrdersReport.vue';
 
 import ChartWindow from './components/Chart/ChartWindow.vue';
@@ -75,10 +73,10 @@ export default {
   }),
   computed: {
     entriesForChart() {
-      const src = ( this.tab == 1 ? 
-          this.$store.state.vm.entries : this.$store.state.vm.orders );
+      const src = (this.tab === 1
+        ? this.$store.state.vm.entries : this.$store.state.vm.orders);
       return src || [];
-    }
+    },
   },
   components: {
     Tickers,
@@ -86,8 +84,8 @@ export default {
     Orders,
     ChartWindow,
     OrdersReport,
-  }
-}
+  },
+};
 </script>
 
 <style>

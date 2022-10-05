@@ -11,9 +11,9 @@
       ref="observer"
       class="w-full max-w-lg"
     >
-   
+
       <form @submit.prevent="submit">
- 
+
     <v-card-text>
 
         <div class="v-dynamic-form--inputs">
@@ -91,17 +91,14 @@
       <!-- dummy state propergate -->
       <state-buffer :invalid="invalid" v-on="$listeners" />
     </validation-observer>
-  
+
   </v-card>
 </template>
 
 <script>
 
-import VTagsInput from './VTagsInput.vue'
-
-// eslint-disable-next-line no-unused-vars
-import { extend, setInteractionMode } from "vee-validate";
-//setInteractionMode("eager");
+// import { setInteractionMode } from 'vee-validate';
+// setInteractionMode("eager");
 
 /*
 import * as rules from 'vee-validate/dist/rules';
@@ -110,35 +107,12 @@ Object.keys(rules).forEach(rule => {
 });
 */
 
-import { required, required_if, email, numeric, double } from "vee-validate/dist/rules";
+import {
+  // eslint-disable-next-line camelcase
+  required, required_if, email, numeric, double,
+} from 'vee-validate/dist/rules';
 
-extend("required", {
-  ...required,
-  message: "{_field_} can not be empty",
-});
-
-extend("required_if", {
-  ...required_if,
-  message: "{_field_} can not be empty in this mode",
-});
-
-
-extend("email", {
-  ...email,
-  message: "{_field_} must be an email address",
-});
-
-extend("numeric", {
-  ...numeric,
-  message: "{_field_} must be an integer",
-});
-
-extend("double", {
-  ...double,
-  message: "{_field_} must contain floating point",
-});
-
-import { ValidationProvider, ValidationObserver } from "vee-validate";
+import { extend, ValidationProvider, ValidationObserver } from 'vee-validate';
 
 import {
   VTextField,
@@ -151,25 +125,56 @@ import {
   VAutocomplete,
   VRadio,
   VCol,
-  VRow
-} from "vuetify/lib";
-import { get, pick, startCase, max, chain } from "lodash";
+  VRow,
+} from 'vuetify/lib';
+
+import {
+  get, pick, startCase, max, chain,
+} from 'lodash';
+
+import VTagsInput from './VTagsInput.vue';
+
+extend('required', {
+  ...required,
+  message: '{_field_} can not be empty',
+});
+
+extend('required_if', {
+  // eslint-disable-next-line camelcase
+  ...required_if,
+  message: '{_field_} can not be empty in this mode',
+});
+
+extend('email', {
+  ...email,
+  message: '{_field_} must be an email address',
+});
+
+extend('numeric', {
+  ...numeric,
+  message: '{_field_} must be an integer',
+});
+
+extend('double', {
+  ...double,
+  message: '{_field_} must contain floating point',
+});
 
 const StateBuffer = {
-  name: "StateBuffer",
-  props: ["invalid"],
+  name: 'StateBuffer',
+  props: ['invalid'],
   watch: {
     invalid(value) {
-      this.$emit("update:valid", !value);
+      this.$emit('update:valid', !value);
     },
   },
   render() {
-    return "span";
+    return 'span';
   },
 };
 
 export default {
-  name: "VDynamicForm",
+  name: 'VDynamicForm',
   props: {
     value: {},
     hideName: { type: Boolean, default: false },
@@ -191,14 +196,17 @@ export default {
     VSwitch,
     VTextarea,
     VRadio,
-    ValidationProvider, ValidationObserver,
-    VCol,VRow,VAutocomplete,
-    VTagsInput
+    ValidationProvider,
+    ValidationObserver,
+    VCol,
+    VRow,
+    VAutocomplete,
+    VTagsInput,
   },
   computed: {
     form: {
       set(value) {
-        this.$emit("input", value);
+        this.$emit('input', value);
       },
       get() {
         return this.value || this.defaults;
@@ -210,40 +218,42 @@ export default {
           ...options,
           name: options.name || startCase(field),
           input: field,
-          rules: options.rules || "",
-          mode: options.mode || "aggressive",
-          hideName: this.hideName || options.hideName || options["hide-name"],
+          rules: options.rules || '',
+          mode: options.mode || 'aggressive',
+          hideName: this.hideName || options.hideName || options['hide-name'],
           props: options.props || {},
-        })
+        }),
       );
       const n = max(items.map((item) => item.line || 0));
       return chain(items)
         .map((item, i) => {
           if (item.line === undefined) {
+            // eslint-disable-next-line no-param-reassign
             item.line = n + i;
           } else {
-            item.line = item.line + n;
+            // eslint-disable-next-line no-param-reassign
+            item.line += n;
           }
 
           return item;
         })
-        .sortBy("line")
-        .groupBy("line")
+        .sortBy('line')
+        .groupBy('line')
         .value();
     },
   },
   methods: {
     getComponent({ type, component }) {
       if (component) return component;
-      if (type == "text") return "v-text-field";
-      if (type == "select") return "v-select";
-      if (type == "checkbox") return "v-checkbox";
-      if (type == "slider") return "v-slider";
-      if (type == "range-slider") return "v-range-slider";
-      if (type == "switch") return "v-switch";
-      if (type == "textarea") return "v-textarea";
-      if (type == "radio") return "v-radio";
-      return "input";
+      if (type === 'text') return 'v-text-field';
+      if (type === 'select') return 'v-select';
+      if (type === 'checkbox') return 'v-checkbox';
+      if (type === 'slider') return 'v-slider';
+      if (type === 'range-slider') return 'v-range-slider';
+      if (type === 'switch') return 'v-switch';
+      if (type === 'textarea') return 'v-textarea';
+      if (type === 'radio') return 'v-radio';
+      return 'input';
     },
     loadDataFrom(data) {
       this.form = {
@@ -255,14 +265,15 @@ export default {
       if (this.$refs.observer) {
         const valid = await this.$refs.observer.validate();
         if (valid) {
-          this.$emit("submit", this.form);
+          this.$emit('submit', this.form);
         }
       }
     },
     cancel() {
-        this.$emit("cancel", this.form)
+      this.$emit('cancel', this.form);
     },
     clear() {
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const field in this.form || {}) {
         this.form[field] = get(this.defaults, field);
       }

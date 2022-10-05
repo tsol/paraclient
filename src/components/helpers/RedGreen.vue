@@ -1,5 +1,5 @@
 <template>
-<div>    
+<div>
         <div class="green--text" v-if="value > greenAbove">
         {{ value }}
         </div>
@@ -15,7 +15,7 @@ export default {
   components: { },
   props: {
     greenAbove: Number,
-    value: Number
+    value: Number,
   },
   data: () => ({
   }),
@@ -24,8 +24,8 @@ export default {
   mounted() {
   },
   computed: {
-  }
-}
+  },
+};
 </script>
 
 <style>
