@@ -1,21 +1,18 @@
 <template>
-<div>
-
-<v-dialog v-model="isOpen">
-   <v-dynamic-form
-    v-model="formData"
-    :loading="needOpen || needSubmit"
-    :input-fields="formInputs"
-    @submit="formSubmit"
-    @cancel="formCancel"
-  />
-</v-dialog>
-
-</div>
+  <div>
+    <v-dialog v-model="isOpen">
+      <v-dynamic-form
+        v-model="formData"
+        :loading="needOpen || needSubmit"
+        :input-fields="formInputs"
+        @submit="formSubmit"
+        @cancel="formCancel"
+      />
+    </v-dialog>
+  </div>
 </template>
 
 <script>
-
 import VDynamicForm from './Forms/VDynamicForm.vue';
 import { isNumeric } from './helpers/numeric';
 
@@ -29,7 +26,7 @@ export default {
     isOpen: false,
     needOpen: false,
     needSubmit: false,
-    formData: { },
+    formData: {},
   }),
   methods: {
     open() {
@@ -61,7 +58,6 @@ export default {
     parseFormData(data) {
       this.formData = { ...data };
     },
-
   },
   sockets: {
     ep_params(data) {
@@ -82,7 +78,9 @@ export default {
   computed: {
     tags() {
       const tags = {};
-      this.$store.state.vm.tags.forEach((t) => { tags[t.name] = t; });
+      this.$store.state.vm.tags.forEach((t) => {
+        tags[t.name] = t;
+      });
       return tags;
     },
     timeframes() {
@@ -97,28 +95,53 @@ export default {
     formInputs() {
       return {
         START_SUM: {
-          name: 'Start USD', type: 'text', line: 1, rules: 'required|numeric',
+          name: 'Start USD',
+          type: 'text',
+          line: 1,
+          rules: 'required|numeric',
         },
         STAKE_MODE: {
-          name: 'Stake Mode', type: 'select', props: { items: ['fixed', 'percent'] }, line: 1, rules: 'required',
+          name: 'Stake Mode',
+          type: 'select',
+          props: { items: ['fixed', 'percent'] },
+          line: 1,
+          rules: 'required',
         },
         STAKE_PERCENT: {
-          name: 'Stake %', type: 'text', line: 1, rules: 'double|required_if:STAKE_MODE,percent',
+          name: 'Stake %',
+          type: 'text',
+          line: 1,
+          rules: 'double|required_if:STAKE_MODE,percent',
         },
         STAKE_FIXED: {
-          name: 'Stake Fixed', type: 'text', line: 1, rules: 'numeric|required_if:STAKE_MODE,fixed',
+          name: 'Stake Fixed',
+          type: 'text',
+          line: 1,
+          rules: 'numeric|required_if:STAKE_MODE,fixed',
         },
         LEVERAGE: {
-          name: 'Leverage', type: 'text', line: 2, rules: 'numeric',
+          name: 'Leverage',
+          type: 'text',
+          line: 2,
+          rules: 'numeric',
         },
         SIMULT_RISK_PERCENT: {
-          name: 'Simult Risk %', type: 'text', line: 2, rules: 'double',
+          name: 'Simult Risk %',
+          type: 'text',
+          line: 2,
+          rules: 'double',
         },
         COST_BUY_PERCENT: {
-          name: 'Buy Comission %', type: 'text', line: 2, rules: 'double',
+          name: 'Buy Comission %',
+          type: 'text',
+          line: 2,
+          rules: 'double',
         },
         COST_SELL_PERCENT: {
-          name: 'Sell Comission %', type: 'text', line: 2, rules: 'double',
+          name: 'Sell Comission %',
+          type: 'text',
+          line: 2,
+          rules: 'double',
         },
         SYMBOLS: {
           name: 'Symbols',
@@ -183,10 +206,8 @@ export default {
         },
       };
     },
-
   },
 };
 </script>
 
-<style>
-</style>
+<style></style>

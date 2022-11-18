@@ -1,20 +1,15 @@
 <template>
-<v-card>
+  <v-card>
     <v-card-title>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              @click="reload()"
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon>mdi-reload</v-icon>
-            </v-btn>
-          </template>
-          <span>Reload entries list</span>
-        </v-tooltip>
-<!--
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn @click="reload()" v-bind="attrs" v-on="on">
+            <v-icon>mdi-reload</v-icon>
+          </v-btn>
+        </template>
+        <span>Reload entries list</span>
+      </v-tooltip>
+      <!--
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -43,13 +38,14 @@
           <span>Restart tickers live = true</span>
         </v-tooltip>
 -->
-        <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-        <div> symbols: <b> {{ this.countSymbols }} </b>,
-  gain: <b>{{ this.sumSelectedGain }}%</b>, win/loose: <b>{{ this.winLooseRatio }}</b> </div>
+      <div>
+        symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}%</b>,
+        win/loose: <b>{{ this.winLooseRatio }}</b>
+      </div>
 
-       <v-spacer></v-spacer>
-
+      <v-spacer></v-spacer>
     </v-card-title>
 
     <v-data-table
@@ -65,37 +61,31 @@
       @current-items="gotFiltered"
       ref="entriesTable"
     >
-
       <template v-slot:top>
-
         <v-row>
           <v-col cols="12" sm="2" md="2">
-
             <v-datetime-picker
-                v-model="filter.dateFrom"
-                label="С даты"
-                :text-field-props="{prependIcon: 'mdi-calendar'}"
-                :date-picker-props="{ locale:'ru-RU' }"
-                :time-picker-props="{ format: '24hr' }"
+              v-model="filter.dateFrom"
+              label="С даты"
+              :text-field-props="{ prependIcon: 'mdi-calendar' }"
+              :date-picker-props="{ locale: 'ru-RU' }"
+              :time-picker-props="{ format: '24hr' }"
             >
-              <template v-slot:dateIcon ><v-icon>mdi-calendar</v-icon></template>
-              <template v-slot:timeIcon ><v-icon>mdi-clock</v-icon></template>
+              <template v-slot:dateIcon><v-icon>mdi-calendar</v-icon></template>
+              <template v-slot:timeIcon><v-icon>mdi-clock</v-icon></template>
             </v-datetime-picker>
-
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
-
             <v-datetime-picker
-                v-model="filter.dateTo"
-                label="По дату"
-                :date-picker-props="{ locale:'ru-RU' }"
-                :time-picker-props="{ format: '24hr' }"
+              v-model="filter.dateTo"
+              label="По дату"
+              :date-picker-props="{ locale: 'ru-RU' }"
+              :time-picker-props="{ format: '24hr' }"
             >
-              <template v-slot:dateIcon ><v-icon>mdi-calendar</v-icon></template>
-              <template v-slot:timeIcon ><v-icon>mdi-clock</v-icon></template>
+              <template v-slot:dateIcon><v-icon>mdi-calendar</v-icon></template>
+              <template v-slot:timeIcon><v-icon>mdi-clock</v-icon></template>
             </v-datetime-picker>
-
           </v-col>
 
           <v-col cols="12" sm="1" md="1">
@@ -138,7 +128,6 @@
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
-
             <v-text-field
               v-model="searchInput"
               append-icon="mdi-magnify"
@@ -146,56 +135,47 @@
               single-line
               hide-details
             ></v-text-field>
-
           </v-col>
-
         </v-row>
-
       </template>
 
-        <template v-slot:[`item.real`]="{ item }">
-          <v-btn
-            @click="makeEntryReal(item)"
-          >
-            {{ ( item.comment.includes('[BROK]') ? 'Y' : 'N' ) }}
-          </v-btn>
-        </template>
+      <template v-slot:[`item.real`]="{ item }">
+        <v-btn @click="makeEntryReal(item)">
+          {{ item.comment.includes('[BROK]') ? 'Y' : 'N' }}
+        </v-btn>
+      </template>
 
-        <template v-slot:[`item.symbol`]="{ item }">
-          <v-btn
-            @click="openChartHistory(item)"
-          >
-            {{ item.symbol }}
-          </v-btn>
-        </template>
+      <template v-slot:[`item.symbol`]="{ item }">
+        <v-btn @click="openChartHistory(item)">
+          {{ item.symbol }}
+        </v-btn>
+      </template>
 
-    <template v-slot:[`item.gainPercent`]="{ item }">
+      <template v-slot:[`item.gainPercent`]="{ item }">
         <div class="green--text" v-if="item.gainPercent > 0">
-        {{ item.gainPercent }}
+          {{ item.gainPercent }}
         </div>
         <div class="red--text" v-else>
-        {{ item.gainPercent }}
+          {{ item.gainPercent }}
         </div>
-    </template>
+      </template>
 
-    <template v-slot:[`item.time`]="{ item }">
+      <template v-slot:[`item.time`]="{ item }">
         <div :id="item.id">
-        {{ dateFromUnix(item.time) }}
+          {{ dateFromUnix(item.time) }}
         </div>
-    </template>
+      </template>
 
-    <template v-slot:[`item.closeTime`]="{ item }">
+      <template v-slot:[`item.closeTime`]="{ item }">
         <div :id="item.id">
-        {{ ( item.closeTime > 0 ? dateFromUnix(item.closeTime) : '-' ) }}
+          {{ item.closeTime > 0 ? dateFromUnix(item.closeTime) : '-' }}
         </div>
-    </template>
-
+      </template>
     </v-data-table>
-</v-card>
+  </v-card>
 </template>
 
 <script>
-
 // import InputDate from './helpers/InputDate.vue'
 
 import { debounce } from './helpers/debounce';
@@ -206,7 +186,7 @@ function fnum(number, precision) {
 }
 
 export default {
-  components: { },
+  components: {},
   data: () => ({
     // entries: [],
     searchInput: '',
@@ -226,7 +206,8 @@ export default {
   }),
   methods: {
     makeEntryReal(item) {
-      this.$socket.emit('make_real_entry', { entryId: item.id });
+      // this.$socket.emit('make_real_entry', { entryId: item.id });
+      console.log('not making real order for entry', item);
       // this.loading = true;
     },
     openChartHistory(item) {
@@ -261,15 +242,17 @@ export default {
       return `${od.toLocaleDateString('ru-RU')} ${od.toLocaleTimeString('ru-RU')}`;
     },
     dateToUnix(dateString) {
-      if (!dateString) { return null; }
+      if (!dateString) {
+        return null;
+      }
       const date = new Date(dateString);
       return date.getTime();
     },
     filterEntryDate(timestamp) {
-      if (this.filter.dateFrom && (timestamp < this.filterDateFromTimestamp)) {
+      if (this.filter.dateFrom && timestamp < this.filterDateFromTimestamp) {
         return false;
       }
-      if (this.filter.dateTo && (timestamp > this.filterDateToTimestamp)) {
+      if (this.filter.dateTo && timestamp > this.filterDateToTimestamp) {
         return false;
       }
       return true;
@@ -280,8 +263,7 @@ export default {
       this.loading = false;
     },
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     entries() {
       return this.$store.state.vm.entries || [];
@@ -295,7 +277,7 @@ export default {
           groupable: true,
           filter: (v) => {
             if (!this.filter.symbol) return true;
-            return (v.includes(this.filter.symbol));
+            return v.includes(this.filter.symbol);
           },
         },
         {
@@ -304,7 +286,7 @@ export default {
           groupable: true,
           filter: (v) => {
             if (!this.filter.timeframe) return true;
-            return (v === this.filter.timeframe);
+            return v === this.filter.timeframe;
           },
         },
         {
@@ -313,7 +295,7 @@ export default {
           groupable: true,
           filter: (v) => {
             if (!this.filter.strategy) return true;
-            return (v.includes(this.filter.strategy));
+            return v.includes(this.filter.strategy);
           },
         },
         {
@@ -328,7 +310,7 @@ export default {
           groupable: false,
           filter: (v) => {
             if (!this.filter.type) return true;
-            return (v === this.filter.type);
+            return v === this.filter.type;
           },
         },
         { text: 'Entry Price', value: 'entryPrice', groupable: false },
@@ -350,9 +332,8 @@ export default {
           filter: (value, st, item) => {
             if (!this.filter.tags || this.filter.tags.length === 0) return true;
 
-            const searchIn = item.symbol + item.timeframe + item.type
-                        + item.strategy + item.result
-                        + item.comment;
+            const searchIn =
+              item.symbol + item.timeframe + item.type + item.strategy + item.result + item.comment;
 
             return this.filter.tags.every((w) => searchIn.includes(w));
           },
@@ -362,7 +343,6 @@ export default {
                   if (!this.filter.commentWords) return true;
                   return this.filter.commentWords.every( (w) => comment.includes(w) );
               } */
-
       ];
     },
     filterDateFromTimestamp() {
@@ -375,7 +355,7 @@ export default {
       // todo: replace with reduce
       const uniq = {};
       // eslint-disable-next-line no-return-assign
-      this.filteredItems.forEach((fi) => uniq[fi.symbol] = 1);
+      this.filteredItems.forEach((fi) => (uniq[fi.symbol] = 1));
       return Object.keys(uniq).length;
     },
     winLooseRatio() {
@@ -383,7 +363,9 @@ export default {
       const loose = this.filteredItems.reduce((p, c) => p + (c.gainPercent < 0 ? 1 : 0), 0);
 
       let ratio = 0;
-      if (win > 0) { ratio = (win / (win + loose)) * 100; }
+      if (win > 0) {
+        ratio = (win / (win + loose)) * 100;
+      }
 
       return `${win} / ${loose} = ${ratio.toFixed(2)}%`;
     },
@@ -407,15 +389,17 @@ export default {
 
   watch: {
     searchInput: debounce(
-      function post(v) { this.filter.tags = v.split(/,\s*/); this.loading = false; },
+      function post(v) {
+        this.filter.tags = v.split(/,\s*/);
+        this.loading = false;
+      },
       700,
-      function pre() { this.loading = true; },
+      function pre() {
+        this.loading = true;
+      }
     ),
-
   },
-
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,5 +1,5 @@
 <template>
-<!--:value="value"
+  <!--:value="value"
     v-on="$listeners"
     hide-details="false"
 -->
@@ -12,7 +12,7 @@
     :error="isError"
     :error-count="1"
     :value="textValue"
-     />
+  />
 </template>
 <script>
 export default {
@@ -30,7 +30,7 @@ export default {
       return this.errors.length > 0;
     },
     inputLabel() {
-      return (this.label || this.availToString);
+      return this.label || this.availToString;
     },
     availToString() {
       return Object.keys(this.avail).join(', ');
@@ -54,7 +54,9 @@ export default {
     },
     parseValue(str) {
       const res = {};
-      if (!str) { return res; }
+      if (!str) {
+        return res;
+      }
 
       const parts = str.split(/[\s,]+/);
 
@@ -62,7 +64,9 @@ export default {
       for (const p of parts) {
         const [name, value] = p.split(':');
 
-        if (!name) { continue; }
+        if (!name) {
+          continue;
+        }
 
         if (!this.avail[name]) {
           throw new Error(`Tag ${name} is not valid`);
@@ -71,15 +75,17 @@ export default {
         if (!value) {
           this.label = `${name}: ${this.avail[name].desc}`;
 
-          throw new Error(`Tag ${name} needs one of these values: ${
-            this.avail[name].vals.join(', ')}`);
+          throw new Error(
+            `Tag ${name} needs one of these values: ${this.avail[name].vals.join(', ')}`
+          );
         }
 
         if (!this.avail[name].vals.includes(value)) {
           this.label = `${name}: ${this.avail[name].desc}`;
 
-          throw new Error(`Value ${value} for tag ${name} is not valid, need: ${
-            this.avail[name].vals.join(', ')}`);
+          throw new Error(
+            `Value ${value} for tag ${name} is not valid, need: ${this.avail[name].vals.join(', ')}`
+          );
         }
         res[name] = value;
       }

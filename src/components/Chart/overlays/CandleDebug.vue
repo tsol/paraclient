@@ -1,16 +1,19 @@
 <!-- eslint-disable no-restricted-syntax -->
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
   name: 'CandleDebug',
   mixins: [Overlay],
   methods: {
-    legend() { return []; },
+    legend() {
+      return [];
+    },
     concatLabels(visualDebug, position) {
       return visualDebug.reduce((p, c) => {
-        if ((c.type === 'label') && (c.position === position)) { return p + (p.length > 0 ? ', ' : '') + c.label; }
+        if (c.type === 'label' && c.position === position) {
+          return p + (p.length > 0 ? ', ' : '') + c.label;
+        }
         return p;
       }, '');
     },
@@ -86,10 +89,10 @@ export default {
       const stopLossY = layout.$2screen(item.sl);
 
       ctx.fillStyle = 'red';
-      ctx.fillRect(fromX, stopLossY, widthX, (middleY - stopLossY));
+      ctx.fillRect(fromX, stopLossY, widthX, middleY - stopLossY);
 
       ctx.fillStyle = 'green';
-      ctx.fillRect(fromX, middleY, widthX, (takeProfitY - middleY));
+      ctx.fillRect(fromX, middleY, widthX, takeProfitY - middleY);
 
       ctx.globalAlpha = 0.8;
 
@@ -112,12 +115,23 @@ export default {
 
       for (const p of this.$props.data) {
         const candle = p[1];
-        if (!candle) { continue; }
+        if (!candle) {
+          continue;
+        }
 
         const items = this.filterItems(p[2]);
 
-        this.drawCircles(layout, ctx, items.filter((i) => i.type === 'circle'));
-        this.drawLabels(layout, ctx, candle, items.filter((i) => i.type === 'label'));
+        this.drawCircles(
+          layout,
+          ctx,
+          items.filter((i) => i.type === 'circle')
+        );
+        this.drawLabels(
+          layout,
+          ctx,
+          candle,
+          items.filter((i) => i.type === 'label')
+        );
         /*
                 items.filter( i => i.type == 'entry' )
                     .forEach( item => this.drawEntryBox(layout,ctx,candle,item) );
@@ -125,8 +139,12 @@ export default {
 */
       }
     },
-    use_for() { return ['CandleDebug']; },
-    data_colors() { return [this.color]; },
+    use_for() {
+      return ['CandleDebug'];
+    },
+    data_colors() {
+      return [this.color];
+    },
     meta_info() {
       return {
         author: 'Igor Kravets',
@@ -146,5 +164,4 @@ export default {
     },
   },
 };
-
 </script>

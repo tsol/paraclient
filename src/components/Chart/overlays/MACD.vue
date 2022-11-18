@@ -1,6 +1,5 @@
 <!-- eslint-disable no-restricted-syntax -->
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
@@ -26,7 +25,7 @@ export default {
       for (const p of this.$props.data) {
         const x = layout.t2screen(p[0]) - off;
         const y = layout.$2screen(p[1]) - 0.5;
-        const c = (p[1] > 0 ? 0 : 2);
+        const c = p[1] > 0 ? 0 : 2;
         ctx.strokeStyle = this.hist_colors[c];
         ctx.beginPath();
         ctx.moveTo(x, base);
@@ -54,13 +53,15 @@ export default {
       }
       ctx.stroke();
     },
-    use_for() { return ['MACD']; },
+    use_for() {
+      return ['MACD'];
+    },
     pretty(num) {
       return num.toFixed(Math.abs(num) > 0.001 ? 4 : 8);
     },
     legend(values) {
       return [
-        { value: this.pretty(values[1]), color: (values[1].h > 0 ? 'green' : 'red') },
+        { value: this.pretty(values[1]), color: values[1].h > 0 ? 'green' : 'red' },
         { value: this.pretty(values[2]), color: this.macd_color },
         { value: this.pretty(values[3]), color: this.signal_color },
       ];

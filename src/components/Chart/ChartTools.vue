@@ -1,24 +1,13 @@
 <template>
   <div class="text-center">
-    <v-menu
-      v-model="menu"
-      :close-on-content-click="false"
-      :nudge-width="200"
-    >
+    <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-            icon
-            dark
-            v-bind="attrs"
-            v-on="on"
-        >
-            <v-icon>mdi-cog-outline</v-icon>
+        <v-btn icon dark v-bind="attrs" v-on="on">
+          <v-icon>mdi-cog-outline</v-icon>
         </v-btn>
-
       </template>
 
       <v-card>
-
         <!--
         <v-list>
           <v-list-item>
@@ -47,35 +36,35 @@
         </v-list>
         -->
 
-<v-container fluid>
-    <v-radio-group v-model="cfg.entryMode">
-      <template v-slot:label>
-        <div>Entries show</div>
-      </template>
-      <v-radio value="current">
-        <template v-slot:label>
-          <div>Only current entry</div>
-        </template>
-      </v-radio>
-      <v-radio value="strategy-timeframe">
-        <template v-slot:label>
-          <div>Only current strategy + timeframe</div>
-        </template>
-      </v-radio>
-      <v-radio value="strategy">
-        <template v-slot:label>
-          <div>Current strategy/all timeframes</div>
-        </template>
-      </v-radio>
-      <v-radio value="symbol">
-        <template v-slot:label>
-          <div>All timeframes/strategies</div>
-        </template>
-      </v-radio>
-    </v-radio-group>
-  </v-container>
+        <v-container fluid>
+          <v-radio-group v-model="cfg.entryMode">
+            <template v-slot:label>
+              <div>Entries show</div>
+            </template>
+            <v-radio value="current">
+              <template v-slot:label>
+                <div>Only current entry</div>
+              </template>
+            </v-radio>
+            <v-radio value="strategy-timeframe">
+              <template v-slot:label>
+                <div>Only current strategy + timeframe</div>
+              </template>
+            </v-radio>
+            <v-radio value="strategy">
+              <template v-slot:label>
+                <div>Current strategy/all timeframes</div>
+              </template>
+            </v-radio>
+            <v-radio value="symbol">
+              <template v-slot:label>
+                <div>All timeframes/strategies</div>
+              </template>
+            </v-radio>
+          </v-radio-group>
+        </v-container>
 
-<!--
+        <!--
         <v-divider></v-divider>
 
         <v-list>
@@ -102,13 +91,7 @@
 -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="doApply()"
-          >
-            Apply
-          </v-btn>
+          <v-btn color="primary" text @click="doApply()"> Apply </v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
@@ -134,10 +117,11 @@ export default {
   },
   watch: {
     menu(isOpen) {
-      if (!isOpen) { return; }
+      if (!isOpen) {
+        return;
+      }
       this.cfg = { ...this.config };
     },
   },
-
 };
 </script>

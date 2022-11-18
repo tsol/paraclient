@@ -1,31 +1,25 @@
 <template>
-<v-card>
+  <v-card>
     <v-card-title>
-        <div>
-            <v-chip v-if="isConnected"
-                class="ma-2" color="green" text-color="white"
-            >
-                connected
-            </v-chip>
-            <v-chip v-else
-                class="ma-2" color="red" text-color="white"
-            >
-                disconnected
-            </v-chip>
-        </div>
-        <v-btn @click="reloadTickers()">
-            <v-icon>mdi-reload</v-icon>
-        </v-btn>
+      <div>
+        <v-chip v-if="isConnected" class="ma-2" color="green" text-color="white">
+          connected
+        </v-chip>
+        <v-chip v-else class="ma-2" color="red" text-color="white"> disconnected </v-chip>
+      </div>
+      <v-btn @click="reloadTickers()">
+        <v-icon>mdi-reload</v-icon>
+      </v-btn>
 
-        <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-        <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-        ></v-text-field>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
     </v-card-title>
 
     <v-data-table
@@ -40,30 +34,28 @@
       show-group-by
       :search="search"
     >
-        <template v-slot:[`item.id`]="{ item }">
-          <v-btn
-            @click="$store.dispatch('chart/openRecent',item.id)"
-          >
-            {{ item.id }}
-          </v-btn>
-        </template>
+      <template v-slot:[`item.id`]="{ item }">
+        <v-btn @click="$store.dispatch('chart/openRecent', item.id)">
+          {{ item.id }}
+        </v-btn>
+      </template>
 
-        <template v-slot:[`item.firstTimestamp`]="{ item }">
-          {{ dateFromUnix(item.firstTimestamp) }}
-        </template>
+      <template v-slot:[`item.firstTimestamp`]="{ item }">
+        <date-from-unix :timestamp="item.firstTimestamp" />
+      </template>
 
-        <template v-slot:[`item.lastTimestamp`]="{ item }">
-          {{ dateFromUnix(item.lastTimestamp) }}
-        </template>
-
+      <template v-slot:[`item.lastTimestamp`]="{ item }">
+        <date-from-unix :timestamp="item.lastTimestamp" />
+      </template>
     </v-data-table>
-</v-card>
+  </v-card>
 </template>
 
 <script>
+import DateFromUnix from './common/DateFromUnix.vue';
 
 export default {
-  components: {},
+  components: { DateFromUnix },
   data: () => ({
     loading: false,
     isConnected: false,
@@ -78,23 +70,22 @@ export default {
       { text: 'Live', value: 'isLive', groupable: false },
       { text: 'From', value: 'firstTimestamp', groupable: false },
       { text: 'To', value: 'lastTimestamp', groupable: false },
-
     ],
   }),
 
   methods: {
-    dateFromUnix(unixtime) {
-      const od = new Date(unixtime);
-      return `${od.toLocaleDateString('ru-RU')} ${od.toLocaleTimeString('ru-RU')}`;
-    },
     reloadTickers() {
       this.$socket.emit('list_tickers', '');
       this.loading = true;
     },
   },
   sockets: {
-    connect() { this.isConnected = true; },
-    disconnect() { this.isConnected = false; },
+    connect() {
+      this.isConnected = true;
+    },
+    disconnect() {
+      this.isConnected = false;
+    },
     tickers(data) {
       this.tickers = data;
       this.loading = false;
@@ -103,12 +94,8 @@ export default {
   mounted() {
     this.reloadTickers();
   },
-  computed: {
-
-  },
+  computed: {},
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

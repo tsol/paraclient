@@ -1,6 +1,5 @@
 <!-- eslint-disable no-restricted-syntax -->
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
@@ -37,8 +36,12 @@ export default {
       }
       ctx.stroke();
     },
-    use_for() { return ['BBANDS']; },
-    data_colors() { return ['black']; },
+    use_for() {
+      return ['BBANDS'];
+    },
+    data_colors() {
+      return ['black'];
+    },
     meta_info() {
       return {
         author: 'Igor Kravets',
@@ -50,10 +53,15 @@ export default {
     },
   },
   computed: {
-    colorM() { return this.$props.settings.colorMiddle || 'orange'; },
-    colorU() { return this.$props.settings.colorUp || 'darkblue'; },
-    colorD() { return this.$props.settings.colorDown || 'darkblue'; },
+    colorM() {
+      return this.$props.settings.colorMiddle || 'orange';
+    },
+    colorU() {
+      return this.$props.settings.colorUp || 'darkblue';
+    },
+    colorD() {
+      return this.$props.settings.colorDown || 'darkblue';
+    },
   },
 };
-
 </script>

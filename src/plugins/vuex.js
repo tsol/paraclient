@@ -8,14 +8,12 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules: {
-    chart, vm,
+    chart,
+    vm,
   },
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+  state: {},
+  mutations: {},
+  actions: {},
   getters: {
     /*
         storesActive: state => (state.tables.cb_stores

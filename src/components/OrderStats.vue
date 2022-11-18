@@ -1,11 +1,10 @@
 <template>
-<v-card>
+  <v-card>
     <v-card-title>
-
-        <v-btn @click="reload()">
-            <v-icon>mdi-reload</v-icon>
-        </v-btn>
-<!--
+      <v-btn @click="reload()">
+        <v-icon>mdi-reload</v-icon>
+      </v-btn>
+      <!--
         <v-btn color="blue" @click="restartTickers(false)">
             <v-icon>mdi-reload</v-icon>
         </v-btn>
@@ -14,19 +13,19 @@
             <v-icon>mdi-play</v-icon>
         </v-btn>
 -->
-        <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-        <div> symbols: <b> {{ this.countSymbols }} </b>,
-          gain: <b>{{ this.sumSelectedGain }}</b></div>
+      <div>
+        symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b>
+      </div>
 
-       <v-spacer></v-spacer>
-
+      <v-spacer></v-spacer>
     </v-card-title>
 
     <v-data-table
       v-model="selected"
       show-select
-      :loading="(orderStats.length === 0)"
+      :loading="orderStats.length === 0"
       :headers="headers"
       :items="orderStats"
       item-key="id"
@@ -34,11 +33,8 @@
       class="elevation-1"
       :search="search"
       @current-items="gotFiltered"
-
     >
-
       <template v-slot:top>
-
         <v-row>
           <v-col cols="12" sm="2" md="2">
             <InputDate
@@ -79,7 +75,6 @@
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
-
             <v-text-field
               v-model="search"
               append-icon="mdi-magnify"
@@ -87,43 +82,39 @@
               single-line
               hide-details
             ></v-text-field>
-
           </v-col>
-
         </v-row>
-
       </template>
 
-    <template v-slot:[`item.gain`]="{ item }">
-      <red-green :value="item.gain" :greenAbove="0" />
-    </template>
+      <template v-slot:[`item.gain`]="{ item }">
+        <red-green :value="item.gain" :greenAbove="0" />
+      </template>
 
-    <template v-slot:[`item.ratio`]="{ item }">
-      <red-green :value="item.ratio" :greenAbove="49.99" />
-    </template>
+      <template v-slot:[`item.ratio`]="{ item }">
+        <red-green :value="item.ratio" :greenAbove="49.99" />
+      </template>
 
-    <template v-slot:[`item.entries`]="{ item }">
-      <div class="entries" >
-      {{ item['entries'] }}
-      </div>
-    </template>
+      <template v-slot:[`item.entries`]="{ item }">
+        <div class="entries">
+          {{ item['entries'] }}
+        </div>
+      </template>
 
-    <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_gain`]="{ item }">
-      <red-green :key="index" :value="item[tf+'_gain']" :greenAbove="0" />
-    </template>
+      <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_gain`]="{ item }">
+        <red-green :key="index" :value="item[tf + '_gain']" :greenAbove="0" />
+      </template>
 
-    <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_ratio`]="{ item }">
-      <red-green :key="index" :value="item[tf+'_ratio']" :greenAbove="49.99" />
-    </template>
+      <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_ratio`]="{ item }">
+        <red-green :key="index" :value="item[tf + '_ratio']" :greenAbove="49.99" />
+      </template>
 
-    <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_entries`]="{ item }">
-      <div class="entries" :key="index">
-      {{ item[tf+'_entries'] }}
-      </div>
-    </template>
-
+      <template v-for="(tf, index) in timeframes" v-slot:[`item.`+tf+`_entries`]="{ item }">
+        <div class="entries" :key="index">
+          {{ item[tf + '_entries'] }}
+        </div>
+      </template>
     </v-data-table>
-</v-card>
+  </v-card>
 </template>
 
 <script>
@@ -169,7 +160,9 @@ export default {
       return `${od.toLocaleDateString('ru-RU')} ${od.toLocaleTimeString('ru-RU')}`;
     },
     dateToUnix(dateString) {
-      if (!dateString) { return null; }
+      if (!dateString) {
+        return null;
+      }
       const date = new Date(dateString);
       return date.getTime();
     },
@@ -180,8 +173,7 @@ export default {
       this.orderStats = data.stats;
     },
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     headers() {
       const headers = [
@@ -191,7 +183,7 @@ export default {
           groupable: true,
           filter: (v) => {
             if (!this.filter.symbol) return true;
-            return (v.includes(this.filter.symbol));
+            return v.includes(this.filter.symbol);
           },
         },
         {
@@ -200,7 +192,7 @@ export default {
           groupable: true,
           filter: (v) => {
             if (!this.filter.strategy) return true;
-            return (v.includes(this.filter.strategy));
+            return v.includes(this.filter.strategy);
           },
         },
         { text: 'Gain', value: 'gain', groupable: false },
@@ -225,7 +217,7 @@ export default {
     countSymbols() {
       const uniq = {};
       // eslint-disable-next-line no-return-assign
-      this.filteredItems.forEach((fi) => uniq[fi.symbol] = 1);
+      this.filteredItems.forEach((fi) => (uniq[fi.symbol] = 1));
       return Object.keys(uniq).length;
     },
     sumSelectedGain() {
@@ -236,10 +228,8 @@ export default {
 </script>
 
 <style>
-
 .entries {
   color: grey;
   border-right: 1px solid black;
 }
-
 </style>

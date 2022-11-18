@@ -1,5 +1,4 @@
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
@@ -20,8 +19,12 @@ export default {
 
       ctx.stroke();
     },
-    use_for() { return ['ATR']; },
-    data_colors() { return [this.color]; },
+    use_for() {
+      return ['ATR'];
+    },
+    data_colors() {
+      return [this.color];
+    },
     meta_info() {
       return {
         author: 'Igor Kravets',
@@ -38,5 +41,4 @@ export default {
     },
   },
 };
-
 </script>

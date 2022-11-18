@@ -1,20 +1,14 @@
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
   name: 'TradeEntries',
   mixins: [Overlay],
   methods: {
-    legend() { return []; },
-    drawEntryBox(
-      layout,
-      ctx,
-      {
-        entryPrice, takeProfit, stopLoss,
-        openTime, closeTime, text,
-      },
-    ) {
+    legend() {
+      return [];
+    },
+    drawEntryBox(layout, ctx, { entryPrice, takeProfit, stopLoss, openTime, closeTime, text }) {
       ctx.lineWidth = 1.5;
       ctx.globalAlpha = 0.1;
       ctx.strokeStyle = 'black';
@@ -31,10 +25,10 @@ export default {
       const stopLossY = layout.$2screen(stopLoss);
 
       ctx.fillStyle = 'red';
-      ctx.fillRect(fromX, stopLossY, widthX, (middleY - stopLossY));
+      ctx.fillRect(fromX, stopLossY, widthX, middleY - stopLossY);
 
       ctx.fillStyle = 'green';
-      ctx.fillRect(fromX, middleY, widthX, (takeProfitY - middleY));
+      ctx.fillRect(fromX, middleY, widthX, takeProfitY - middleY);
 
       ctx.globalAlpha = 0.8;
 
@@ -53,8 +47,12 @@ export default {
       const { layout } = this.$props;
       this.$props.data.forEach((d) => this.drawEntryBox(layout, ctx, d[1]));
     },
-    use_for() { return ['Entries']; },
-    data_colors() { return [this.color]; },
+    use_for() {
+      return ['TradeEntries'];
+    },
+    data_colors() {
+      return [this.color];
+    },
     meta_info() {
       return {
         author: 'Igor Kravets',
@@ -71,5 +69,4 @@ export default {
     },
   },
 };
-
 </script>

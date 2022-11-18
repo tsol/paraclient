@@ -42,7 +42,9 @@ export default {
     resetMoveTo(state) {
       state.moveTo = null;
     },
-    setEntry(state, entry) { state.entry = entry; },
+    setEntry(state, entry) {
+      state.entry = entry;
+    },
   },
   actions: {
     openRecent(context, tickerId) {
@@ -55,6 +57,7 @@ export default {
       this._vm.$socket.emit('get_chart', {
         tickerId,
         timestamp: entryTime,
+        limit: 3000,
       });
 
       this._vm.$socket.emit('get_entry', { entryId });
@@ -85,8 +88,6 @@ export default {
         context.commit('setFlags', data);
       },
     },
-
   },
-  getters: {
-  },
+  getters: {},
 };

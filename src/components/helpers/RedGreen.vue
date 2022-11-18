@@ -1,32 +1,26 @@
 <template>
-<div>
-        <div class="green--text" v-if="value > greenAbove">
-        {{ value }}
-        </div>
-        <div class="red--text" v-else>
-        {{ value }}
-        </div>
-</div>
+  <div>
+    <div class="green--text" v-if="value > greenAbove">
+      {{ value }}
+    </div>
+    <div class="red--text" v-else>
+      {{ value }}
+    </div>
+  </div>
 </template>
 
 <script>
-
 export default {
-  components: { },
+  components: {},
   props: {
     greenAbove: Number,
     value: Number,
   },
-  data: () => ({
-  }),
-  methods: {
-  },
-  mounted() {
-  },
-  computed: {
-  },
+  data: () => ({}),
+  methods: {},
+  mounted() {},
+  computed: {},
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,102 +1,81 @@
 <template>
   <v-card>
-<!--
+    <!--
     <v-card-title>
     Hello
     </v-card-title>
  -->
 
- <validation-observer
-      v-slot="{ invalid }"
-      ref="observer"
-      class="w-full max-w-lg"
-    >
-
+    <validation-observer v-slot="{ invalid }" ref="observer" class="w-full max-w-lg">
       <form @submit.prevent="submit">
-
-    <v-card-text>
-
-        <div class="v-dynamic-form--inputs">
-          <div v-for="(fields, i) in lines" :key="`line-${i}`">
-            <component :is="fields.length > 1 ? 'v-row' : 'div'">
-              <component
-                :is="fields.length > 1 ? 'v-col' : 'div'"
-                v-for="field in fields"
-                :key="`line-${i}--${field.input}`"
-                v-bind="field.col"
-                v-show="!field.hidden"
-              >
-                <div
-                  v-if="!field.hideName"
-                  class="v-dynamic-form--input-subtitle text-subtitle-2 mb-1"
+        <v-card-text>
+          <div class="v-dynamic-form--inputs">
+            <div v-for="(fields, i) in lines" :key="`line-${i}`">
+              <component :is="fields.length > 1 ? 'v-row' : 'div'">
+                <component
+                  :is="fields.length > 1 ? 'v-col' : 'div'"
+                  v-for="field in fields"
+                  :key="`line-${i}--${field.input}`"
+                  v-bind="field.col"
+                  v-show="!field.hidden"
                 >
-                  {{ field.name }}
-                </div>
-                <slot :name="`field:validation:${field.input}`" v-bind="field">
-                  <validation-provider
-                    v-slot="{ errors }"
-                    :name="field.name"
-                    :rules="field.rules"
-                    :vid="field.vid || field.input"
+                  <div
+                    v-if="!field.hideName"
+                    class="v-dynamic-form--input-subtitle text-subtitle-2 mb-1"
                   >
-                    <slot
-                      :name="`field:${field.input}`"
-                      v-bind="{ ...field, errors, invalid }"
+                    {{ field.name }}
+                  </div>
+                  <slot :name="`field:validation:${field.input}`" v-bind="field">
+                    <validation-provider
+                      v-slot="{ errors }"
+                      :name="field.name"
+                      :rules="field.rules"
+                      :vid="field.vid || field.input"
                     >
-                      <component
-                        :is="getComponent(field)"
-                        v-model="form[field.input]"
-                        v-bind="field.props"
-                        :error-messages="errors"
-                        :disabled="loading || disabled || field.props.disabled"
-                        :readonly="readonly || field.props.readonly"
-                      ></component>
-                    </slot>
-                  </validation-provider>
-                </slot>
+                      <slot :name="`field:${field.input}`" v-bind="{ ...field, errors, invalid }">
+                        <component
+                          :is="getComponent(field)"
+                          v-model="form[field.input]"
+                          v-bind="field.props"
+                          :error-messages="errors"
+                          :disabled="loading || disabled || field.props.disabled"
+                          :readonly="readonly || field.props.readonly"
+                        ></component>
+                      </slot>
+                    </validation-provider>
+                  </slot>
+                </component>
               </component>
-            </component>
+            </div>
           </div>
-        </div>
-
         </v-card-text>
 
         <v-card-actions>
+          <slot v-if="!hideActions" name="actions" v-bind="{ submit, clear, invalid }">
+            <div class="v-dynamic-form--actions">
+              <v-btn
+                color="primary"
+                :loading="loading"
+                :disabled="loading || disabled || invalid"
+                @click="submit"
+                >Submit</v-btn
+              >
 
-        <slot
-          v-if="!hideActions"
-          name="actions"
-          v-bind="{ submit, clear, invalid }"
-        >
-          <div class="v-dynamic-form--actions">
-            <v-btn
-              color="primary"
-              :loading="loading"
-              :disabled="loading || disabled || invalid"
-              @click="submit"
-              >Submit</v-btn
-            >
+              <v-btn @click="cancel" class="ml-2">Cancel</v-btn>
 
-            <v-btn @click="cancel" class="ml-2">Cancel</v-btn>
-
-<!--            <v-btn @click="clear" class="ml-2">Clear</v-btn> -->
-
-          </div>
-        </slot>
-
+              <!--            <v-btn @click="clear" class="ml-2">Clear</v-btn> -->
+            </div>
+          </slot>
         </v-card-actions>
-
       </form>
 
       <!-- dummy state propergate -->
       <state-buffer :invalid="invalid" v-on="$listeners" />
     </validation-observer>
-
   </v-card>
 </template>
 
 <script>
-
 // import { setInteractionMode } from 'vee-validate';
 // setInteractionMode("eager");
 
@@ -109,7 +88,11 @@ Object.keys(rules).forEach(rule => {
 
 import {
   // eslint-disable-next-line camelcase
-  required, required_if, email, numeric, double,
+  required,
+  required_if,
+  email,
+  numeric,
+  double,
 } from 'vee-validate/dist/rules';
 
 import { extend, ValidationProvider, ValidationObserver } from 'vee-validate';
@@ -128,9 +111,7 @@ import {
   VRow,
 } from 'vuetify/lib';
 
-import {
-  get, pick, startCase, max, chain,
-} from 'lodash';
+import { get, pick, startCase, max, chain } from 'lodash';
 
 import VTagsInput from './VTagsInput.vue';
 
@@ -213,17 +194,15 @@ export default {
       },
     },
     lines() {
-      const items = Object.entries(this.inputFields).map(
-        ([field, options]) => ({
-          ...options,
-          name: options.name || startCase(field),
-          input: field,
-          rules: options.rules || '',
-          mode: options.mode || 'aggressive',
-          hideName: this.hideName || options.hideName || options['hide-name'],
-          props: options.props || {},
-        }),
-      );
+      const items = Object.entries(this.inputFields).map(([field, options]) => ({
+        ...options,
+        name: options.name || startCase(field),
+        input: field,
+        rules: options.rules || '',
+        mode: options.mode || 'aggressive',
+        hideName: this.hideName || options.hideName || options['hide-name'],
+        props: options.props || {},
+      }));
       const n = max(items.map((item) => item.line || 0));
       return chain(items)
         .map((item, i) => {

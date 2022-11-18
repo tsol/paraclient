@@ -1,38 +1,35 @@
 <template>
-    <v-menu
-        v-model="menuOpen"
-        :close-on-content-click="false"
-        :nudge-right="40"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-    >
-        <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-                v-model="inputValue"
-                :label="label"
-                prepend-icon="mdi-calendar"
-                readonly
-                clearable
-                v-bind="attrs"
-                v-on="on"
-                @click:clear="emitValue('');"
+  <v-menu
+    v-model="menuOpen"
+    :close-on-content-click="false"
+    :nudge-right="40"
+    transition="scale-transition"
+    offset-y
+    min-width="auto"
+  >
+    <template v-slot:activator="{ on, attrs }">
+      <v-text-field
+        v-model="inputValue"
+        :label="label"
+        prepend-icon="mdi-calendar"
+        readonly
+        clearable
+        v-bind="attrs"
+        v-on="on"
+        @click:clear="emitValue('')"
+      ></v-text-field>
+    </template>
 
-            ></v-text-field>
-        </template>
-
-        <v-date-picker
-            locale="ru-RU"
-            v-model="inputValue"
-            @input="emitValue(inputValue)"
-            mode="dateTime"
-        ></v-date-picker>
-    </v-menu>
-
+    <v-date-picker
+      locale="ru-RU"
+      v-model="inputValue"
+      @input="emitValue(inputValue)"
+      mode="dateTime"
+    ></v-date-picker>
+  </v-menu>
 </template>
 
 <script>
-
 /*
 import Vue from 'vue'
 import DatetimePicker from 'vuetify-datetime-picker'
@@ -61,10 +58,8 @@ export default {
   mounted() {
     this.inputValue = this.defaultValue;
   },
-  computed: {
-  },
+  computed: {},
 };
 </script>
 
-<style>
-</style>
+<style></style>

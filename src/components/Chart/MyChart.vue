@@ -1,7 +1,6 @@
 <template>
   <div>
-
-   <trading-vue
+    <trading-vue
       ref="tradingVue"
       :width="this.width"
       :height="this.height"
@@ -12,13 +11,12 @@
       :color-back="colors.colorBack"
       :color-grid="colors.colorGrid"
       :color-text="colors.colorText"
-      >
-      </trading-vue>
+    >
+    </trading-vue>
 
     <!--
     <div> Candles: {{ candles.length }}, Flags: {{ flagsList }} </div>
     -->
-
   </div>
 </template>
 
@@ -66,7 +64,7 @@ export default {
         chart: {
           type: 'Candles',
           data: this.ohlcv,
-          settings: { },
+          settings: {},
         },
         onchart: [
           {
@@ -81,7 +79,7 @@ export default {
             name: 'E',
             type: 'TradeEntries',
             data: this.entriesData,
-            settings: { },
+            settings: {},
           },
           {
             name: 'V',
@@ -98,13 +96,13 @@ export default {
           ...this.onChart,
         ],
         offchart: [
-          /* {
-            "name": "RSI 14",
-            "type": "Range",
-            "data": this.filterDebug('rsi14'),
-            "settings": { }
-          },
           {
+            name: 'RSI 14',
+            type: 'Range',
+            data: this.filterDebug('rsi14'),
+            settings: {},
+          },
+          /* {
             "name": "ATR 14",
             "type": "ATR",
             "data": this.filterDebug('atr14'),
@@ -114,45 +112,62 @@ export default {
             name: 'MACD',
             type: 'MACD',
             data: this.filterDebugMACD('macd'),
-            settings: { },
+            settings: {},
           },
         ],
       };
     },
     ohlcv() {
-      return this.candles.map(
-        (a) => [a.openTime, a.open, a.high, a.low, a.close, a.volume],
-      );
+      return this.candles.map((a) => [a.openTime, a.open, a.high, a.low, a.close, a.volume]);
     },
     entriesDataOnlyCurrent() {
-      if (!this.entry) { return []; }
+      if (!this.entry) {
+        return [];
+      }
       return [this.entryFormatForLayout(this.entry)];
     },
     entriesDataSymbol() {
-      if (!this.entry || this.entries.length === 0) { return []; }
+      if (!this.entry || this.entries.length === 0) {
+        return [];
+      }
       return this.entries
         .filter((e) => e.symbol === this.entry.symbol)
         .map((e) => this.entryFormatForLayout(e));
     },
     entriesDataStrategy() {
-      if (!this.entry || this.entries.length === 0) { return []; }
+      if (!this.entry || this.entries.length === 0) {
+        return [];
+      }
       return this.entries
-        .filter((e) => (e.symbol === this.entry.symbol) && (e.strategy === this.entry.strategy))
+        .filter((e) => e.symbol === this.entry.symbol && e.strategy === this.entry.strategy)
         .map((e) => this.entryFormatForLayout(e));
     },
     entriesDataStrategyTimeframe() {
-      if (!this.entry || this.entries.length === 0) { return []; }
+      if (!this.entry || this.entries.length === 0) {
+        return [];
+      }
       return this.entries
-        .filter((e) => (e.symbol === this.entry.symbol)
-            && (e.strategy === this.entry.strategy)
-            && (e.timeframe === this.entry.timeframe))
+        .filter(
+          (e) =>
+            e.symbol === this.entry.symbol &&
+            e.strategy === this.entry.strategy &&
+            e.timeframe === this.entry.timeframe
+        )
         .map((e) => this.entryFormatForLayout(e));
     },
     entriesData() {
-      if (this.config.entryMode === 'current') { return this.entriesDataOnlyCurrent; }
-      if (this.config.entryMode === 'symbol') { return this.entriesDataSymbol; }
-      if (this.config.entryMode === 'strategy') { return this.entriesDataStrategy; }
-      if (this.config.entryMode === 'strategy-timeframe') { return this.entriesDataStrategyTimeframe; }
+      if (this.config.entryMode === 'current') {
+        return this.entriesDataOnlyCurrent;
+      }
+      if (this.config.entryMode === 'symbol') {
+        return this.entriesDataSymbol;
+      }
+      if (this.config.entryMode === 'strategy') {
+        return this.entriesDataStrategy;
+      }
+      if (this.config.entryMode === 'strategy-timeframe') {
+        return this.entriesDataStrategyTimeframe;
+      }
       return [];
     },
     candleDebugData() {
@@ -165,11 +180,15 @@ export default {
       });
     },
     vlevelsData() {
-      if (this.flags.vlevels) { return this.flags.vlevels; }
+      if (this.flags.vlevels) {
+        return this.flags.vlevels;
+      }
       return [];
     },
     vlevelsHighData() {
-      if (this.flags.vlevels_high) { return this.flags.vlevels_high; }
+      if (this.flags.vlevels_high) {
+        return this.flags.vlevels_high;
+      }
       return [];
     },
     flagsList() {
@@ -178,14 +197,17 @@ export default {
   },
   methods: {
     entryFormatForLayout(entry) {
-      return [entry.time, {
-        entryPrice: entry.entryPrice,
-        takeProfit: entry.takeProfit,
-        stopLoss: entry.stopLoss,
-        openTime: entry.time,
-        closeTime: entry.closeTime || Date.now(),
-        text: `${entry.strategy}-${entry.timeframe}`,
-      }];
+      return [
+        entry.time,
+        {
+          entryPrice: entry.entryPrice,
+          takeProfit: entry.takeProfit,
+          stopLoss: entry.stopLoss,
+          openTime: entry.time,
+          closeTime: entry.closeTime || Date.now(),
+          text: `${entry.strategy}-${entry.timeframe}`,
+        },
+      ];
     },
     plot(name, color) {
       this.onChart.push({
@@ -200,11 +222,15 @@ export default {
       this.height = window.innerHeight * 0.8;
     },
     filterDebugFillWith(name, fnGetValuesArray) {
-      return this.cdebug.reduce((res, cdb) => [...res,
-        ...cdb.entries
-          .filter((e) => e.name === name)
-          .map((e) => [cdb.time, ...fnGetValuesArray(e)]),
-      ], []);
+      return this.cdebug.reduce(
+        (res, cdb) => [
+          ...res,
+          ...cdb.entries
+            .filter((e) => e.name === name)
+            .map((e) => [cdb.time, ...fnGetValuesArray(e)]),
+        ],
+        []
+      );
     },
     filterDebug(name) {
       return this.filterDebugFillWith(name, (e) => [e.value]);
@@ -237,16 +263,25 @@ export default {
   },
   watch: {
     windowIsOpen(newV) {
-      if (!newV) { return; }
+      if (!newV) {
+        return;
+      }
       this.$refs.tradingVue.resetChart();
 
       this.$nextTick(() => {
         this.hookOpen();
-        if (!this.moveTo) { return; }
-        if (!this.candles || !this.candles[0]) { return; }
+        if (!this.moveTo) {
+          return;
+        }
+        if (!this.candles || !this.candles[0]) {
+          return;
+        }
 
         // eslint-disable-next-line
-        if (this.candles[0].openTime >= this.moveTo) { alert('Target candle already expired, try later date'); return; }
+        if (this.candles[0].openTime >= this.moveTo) {
+          alert('Target candle already expired, try later date');
+          return;
+        }
 
         const [start, finish] = this.$refs.tradingVue.getRange();
         this.$refs.tradingVue.goto(this.moveTo + Math.floor((finish - start) / 2));
@@ -255,6 +290,5 @@ export default {
       });
     },
   },
-
 };
 </script>

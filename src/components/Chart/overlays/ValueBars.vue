@@ -1,13 +1,14 @@
 <!-- eslint-disable no-restricted-syntax -->
 <script>
-
 import { Overlay } from 'trading-vue-js';
 
 export default {
   name: 'ValueBars',
   mixins: [Overlay],
   methods: {
-    legend() { return []; },
+    legend() {
+      return [];
+    },
     drawHorizontalBar(layout, ctx, item) {
       ctx.fillStyle = item.color || this.color;
       ctx.globalAlpha = item.alpha || 0.3;
@@ -28,7 +29,7 @@ export default {
         `${item.w} (${item.s}/${item.r}) [${item.sW}/${item.rW}]`,
         toX + 10,
 
-        fromY + height / 2,
+        fromY + height / 2
       );
     },
     draw(ctx) {
@@ -40,8 +41,12 @@ export default {
         this.drawHorizontalBar(layout, ctx, vd);
       }
     },
-    use_for() { return ['ValueBars']; },
-    data_colors() { return [this.color]; },
+    use_for() {
+      return ['ValueBars'];
+    },
+    data_colors() {
+      return [this.color];
+    },
     meta_info() {
       return {
         author: 'Igor Kravets',
@@ -58,5 +63,4 @@ export default {
     },
   },
 };
-
 </script>

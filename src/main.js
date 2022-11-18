@@ -13,13 +13,16 @@ Vue.use(Vuetify);
 Vue.use(DatetimePicker);
 // Vue.use(VeeValidate);
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: process.env.VUE_APP_WSS_PARASERVER,
-  vuex: {
-    store, actionPrefix: 'SOCKET_',
-  },
-}));
+Vue.use(
+  new VueSocketIO({
+    debug: true,
+    connection: process.env.VUE_APP_WSS_PARASERVER,
+    vuex: {
+      store,
+      actionPrefix: 'SOCKET_',
+    },
+  })
+);
 
 Vue.config.productionTip = false;
 

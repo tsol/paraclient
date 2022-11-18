@@ -7,7 +7,9 @@ export function debounce(fn, delay, fnBefore) {
     // eslint-disable-next-line prefer-rest-params
     const args = arguments;
     const that = this;
-    if (fnBefore) { fnBefore.apply(that, args); }
+    if (fnBefore) {
+      fnBefore.apply(that, args);
+    }
     timeoutID = setTimeout(() => {
       fn.apply(that, args);
     }, delay);
