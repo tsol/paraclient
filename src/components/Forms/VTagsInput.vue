@@ -65,6 +65,7 @@ export default {
         const [name, value] = p.split(':');
 
         if (!name) {
+          // eslint-disable-next-line no-continue
           continue;
         }
 

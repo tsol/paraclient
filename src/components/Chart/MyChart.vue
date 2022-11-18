@@ -277,8 +277,8 @@ export default {
           return;
         }
 
-        // eslint-disable-next-line
         if (this.candles[0].openTime >= this.moveTo) {
+          // eslint-disable-next-line no-alert
           alert('Target candle already expired, try later date');
           return;
         }

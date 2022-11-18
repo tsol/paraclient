@@ -87,8 +87,8 @@ Object.keys(rules).forEach(rule => {
 */
 
 import {
-  // eslint-disable-next-line camelcase
   required,
+  // eslint-disable-next-line camelcase
   required_if,
   email,
   numeric,

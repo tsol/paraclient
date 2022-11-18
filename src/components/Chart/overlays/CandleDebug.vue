@@ -115,7 +115,9 @@ export default {
 
       for (const p of this.$props.data) {
         const candle = p[1];
+
         if (!candle) {
+          // eslint-disable-next-line no-continue
           continue;
         }
 
