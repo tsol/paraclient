@@ -5,7 +5,7 @@
 
       <v-tabs v-model="tab" background-color="indigo" dark>
         <v-tab>Tickers</v-tab>
-        <v-tab>Entries</v-tab>\
+        <v-tab>Entries</v-tab>
         <v-tab>Orders</v-tab>
         <v-tab>Report</v-tab>
 

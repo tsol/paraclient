@@ -3,30 +3,18 @@
     <ep-form ref="epForm" @submit="reload()" />
 
     <v-card-title>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn @click="reload()" v-bind="attrs" v-on="on">
-            <v-icon>mdi-reload</v-icon>
-          </v-btn>
-        </template>
-        <span>Reload orders list</span>
-      </v-tooltip>
+      <hint-button @click="reload()" icon="mdi-reload" hint="Reload orders list" />
 
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn @click="$refs.epForm.open()" color="blue" v-bind="attrs" v-on="on">
-            <v-icon>mdi-cog-refresh</v-icon>
-          </v-btn>
-        </template>
-        <span>Change settings / re-run entry plan</span>
-      </v-tooltip>
+      <hint-button
+        @click="$refs.epForm.open()"
+        icon="mdi-cog-refresh"
+        hint="Change settings / re-run entry plan"
+        color="blue"
+      />
 
       <v-spacer></v-spacer>
 
-      <div>
-        symbols: <b> {{ this.countSymbols }} </b>, gain: <b>{{ this.sumSelectedGain }}</b
-        >, win/loose: <b>{{ this.winLooseRatio }}</b>
-      </div>
+      <ratio-widget :items="filteredItems" />
 
       <v-spacer></v-spacer>
     </v-card-title>
@@ -47,33 +35,17 @@
       <template v-slot:top>
         <v-row>
           <v-col cols="12" sm="2" md="2">
-            <v-datetime-picker
-              v-model="filter.dateFrom"
-              label="С даты"
-              :text-field-props="{ prependIcon: 'mdi-calendar' }"
-              :date-picker-props="{ locale: 'ru-RU' }"
-              :time-picker-props="{ format: '24hr' }"
-            >
-              <template v-slot:dateIcon><v-icon>mdi-calendar</v-icon></template>
-              <template v-slot:timeIcon><v-icon>mdi-clock</v-icon></template>
-            </v-datetime-picker>
+            <date-select v-model="filter.dateFrom" label="По дату" />
           </v-col>
 
           <v-col cols="12" sm="2" md="2">
-            <v-datetime-picker
-              v-model="filter.dateTo"
-              label="По дату"
-              :date-picker-props="{ locale: 'ru-RU' }"
-              :time-picker-props="{ format: '24hr' }"
-            >
-              <template v-slot:dateIcon><v-icon>mdi-calendar</v-icon></template>
-              <template v-slot:timeIcon><v-icon>mdi-clock</v-icon></template>
-            </v-datetime-picker>
+            <date-select v-model="filter.dateTo" label="По дату" />
           </v-col>
 
           <v-col cols="12" sm="1" md="1">
             <v-text-field
               v-model="filter.symbol"
+              prepend-icon="mdi-currency-usd"
               label="Symbol"
               single-line
               clearable
@@ -113,7 +85,7 @@
           <v-col cols="12" sm="2" md="2">
             <v-text-field
               v-model="searchInput"
-              append-icon="mdi-magnify"
+              prepend-icon="mdi-magnify"
               label="Search"
               single-line
               hide-details
@@ -135,12 +107,7 @@
       </template>
 
       <template v-slot:[`item.gainPercent`]="{ item }">
-        <div class="green--text" v-if="item.gainPercent > 0">
-          {{ item.gainPercent }}
-        </div>
-        <div class="red--text" v-else>
-          {{ item.gainPercent }}
-        </div>
+        <red-green :value="item.gainPercent" :greenAbove="0" />
       </template>
 
       <template v-slot:[`item.time`]="{ item }">
@@ -155,9 +122,15 @@
 </template>
 
 <script>
-import { debounce } from './helpers/debounce';
-import EpForm from './EpForm.vue';
+import { debounce } from '../common/debounce';
 import { dateToUnix } from '../common/common';
+
+import EpForm from './EpForm.vue';
+import DateFromUnix from './helpers/DateFromUnix.vue';
+import RedGreen from './helpers/RedGreen.vue';
+import DateSelect from './helpers/DateSelect.vue';
+import RatioWidget from './helpers/RatioWidget.vue';
+import HintButton from './helpers/HintButton.vue';
 
 function fnum(number, precision) {
   const factor = 10 ** precision;
@@ -165,7 +138,7 @@ function fnum(number, precision) {
 }
 
 export default {
-  components: { EpForm },
+  components: { EpForm, DateFromUnix, RedGreen, DateSelect, RatioWidget, HintButton },
   data: () => ({
     // orders: [],
     searchInput: '',
@@ -311,11 +284,6 @@ export default {
             return this.filter.tags.every((w) => searchIn.includes(w));
           },
         },
-
-        /*              filter: (comment) => {
-                  if (!this.filter.commentWords) return true;
-                  return this.filter.commentWords.every( (w) => comment.includes(w) );
-              } */
       ];
     },
     filterDateFromTimestamp() {
@@ -324,29 +292,6 @@ export default {
     filterDateToTimestamp() {
       return dateToUnix(this.filter.dateTo);
     },
-    countSymbols() {
-      // todo: remake with reduce
-      const uniq = {};
-      // eslint-disable-next-line no-return-assign
-      this.filteredItems.forEach((fi) => (uniq[fi.symbol] = 1));
-      return Object.keys(uniq).length;
-    },
-    winLooseRatio() {
-      const win = this.filteredItems.reduce((p, c) => p + (c.gain > 0 ? 1 : 0), 0);
-      const loose = this.filteredItems.reduce((p, c) => p + (c.gain < 0 ? 1 : 0), 0);
-
-      let ratio = 0;
-      if (win > 0) {
-        ratio = (win / (win + loose)) * 100;
-      }
-
-      return `${win} / ${loose} = ${ratio.toFixed(2)}%`;
-    },
-
-    sumSelectedGain() {
-      return this.filteredItems.reduce((p, c) => p + c.gain, 0).toFixed(2);
-    },
-
     formatted_orders() {
       return this.orders.map((i) => ({
         ...i,

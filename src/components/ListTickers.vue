@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import DateFromUnix from './common/DateFromUnix.vue';
+import DateFromUnix from './helpers/DateFromUnix.vue';
 
 export default {
   components: { DateFromUnix },

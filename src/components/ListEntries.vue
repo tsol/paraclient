@@ -178,7 +178,7 @@
 <script>
 // import InputDate from './helpers/InputDate.vue'
 
-import { debounce } from './helpers/debounce';
+import { debounce } from '../common/debounce';
 
 function fnum(number, precision) {
   const factor = 10 ** precision;
