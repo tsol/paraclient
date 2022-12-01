@@ -57,6 +57,8 @@ export default {
       entryMode: 'current',
     },
     allSources: [
+      'bounce',
+      'impulse',
       'hoffman1',
       'macdf',
       'extremum',

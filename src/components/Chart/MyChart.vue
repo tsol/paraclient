@@ -241,15 +241,17 @@ export default {
     hookOpen() {
       this.onChart = [];
 
-      this.plot('mac5', 'fuchsia');
-      this.plot('emac18', '#00FF00');
-      this.plot('emac20', '#000000');
-      this.plot('mac50', 'blue');
-      this.plot('mac89', 'grey');
-      this.plot('emac144', '#FF4500');
-      this.plot('emac35', 'grey');
-      this.plot('ku', 'grey');
-      this.plot('kl', 'grey');
+      this.plot('emac21', '#000000');
+
+      // this.plot('mac5', 'fuchsia');
+      // this.plot('emac18', '#00FF00');
+      // this.plot('emac20', '#000000');
+      // this.plot('mac50', 'blue');
+      // this.plot('mac89', 'grey');
+      // this.plot('emac144', '#FF4500');
+      // this.plot('emac35', 'grey');
+      // this.plot('ku', 'grey');
+      // this.plot('kl', 'grey');
 
       console.log(`HOOK_OPEN candles count = ${this.candles.length}`);
     },

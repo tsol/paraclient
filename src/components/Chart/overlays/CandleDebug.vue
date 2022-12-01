@@ -25,6 +25,29 @@ export default {
       }
       ctx.globalAlpha = 1.0;
     },
+    drawLines(layout, ctx, items) {
+      // eslint-disable-next-line no-restricted-syntax
+
+      for (const item of items) {
+        ctx.strokeStyle = item.color || 'blue';
+        ctx.globalAlpha = item.alpha || 0.3;
+        ctx.lineWidth = item.width;
+
+        ctx.beginPath();
+
+        const x0 = item.x0 ? layout.t2screen(item.x0) : 0;
+        const x1 = item.x1 ? layout.t2screen(item.x1) : layout.width;
+
+        const y0 = item.y0 ? layout.$2screen(item.y0) : 0;
+        const y1 = item.y1 ? layout.$2screen(item.y1) : layout.height;
+
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+
+        ctx.stroke();
+      }
+    },
+
     drawCircle(layout, ctx, item) {
       ctx.fillStyle = item.color || 'blue';
       ctx.globalAlpha = item.alpha || 0.3;
@@ -76,37 +99,6 @@ export default {
       const height = Math.abs(toY - fromY);
       ctx.fillRect(fromX, fromY, width, height);
     },
-    drawEntryBox(layout, ctx, candle, item) {
-      ctx.lineWidth = 1.5;
-      ctx.globalAlpha = item.alpha || 0.1;
-      ctx.strokeStyle = 'black';
-
-      const fromX = layout.t2screen(candle.openTime);
-      const candleWidth = layout.t2screen(candle.closeTime) - layout.t2screen(candle.openTime);
-      const widthX = 10 * candleWidth;
-      const middleY = layout.$2screen(item.ep || candle.close);
-      const takeProfitY = layout.$2screen(item.tp);
-      const stopLossY = layout.$2screen(item.sl);
-
-      ctx.fillStyle = 'red';
-      ctx.fillRect(fromX, stopLossY, widthX, middleY - stopLossY);
-
-      ctx.fillStyle = 'green';
-      ctx.fillRect(fromX, middleY, widthX, takeProfitY - middleY);
-
-      ctx.globalAlpha = 0.8;
-
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = 'black';
-      ctx.fillStyle = '#555';
-      ctx.font = '10px Arial';
-      ctx.textAlign = 'center';
-
-      const x = fromX + widthX / 2;
-      const y = takeProfitY + 10;
-
-      ctx.fillText(item.by, x, y);
-    },
     filterItems(items) {
       return items.filter((i) => this.filterSources.includes(i.src));
     },
@@ -128,17 +120,19 @@ export default {
           ctx,
           items.filter((i) => i.type === 'circle')
         );
+
         this.drawLabels(
           layout,
           ctx,
           candle,
           items.filter((i) => i.type === 'label')
         );
-        /*
-                items.filter( i => i.type == 'entry' )
-                    .forEach( item => this.drawEntryBox(layout,ctx,candle,item) );
-// moved to separate layout: Entries
-*/
+
+        this.drawLines(
+          layout,
+          ctx,
+          items.filter((i) => i.type === 'line')
+        );
       }
     },
     use_for() {
