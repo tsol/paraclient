@@ -58,6 +58,7 @@ export default {
     },
     allSources: [
       'bounce',
+      'magnets',
       'impulse',
       'hoffman1',
       'macdf',

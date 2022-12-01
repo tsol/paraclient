@@ -249,7 +249,12 @@ export default {
       // this.loading = true;
     },
     openChartHistory(item) {
-      this.$store.commit('chart/setEnabledSources', ['entries', item.strategy]);
+      this.$store.commit('chart/setEnabledSources', [
+        'entries',
+        item.strategy,
+        'magnets',
+        'impulse',
+      ]);
 
       this.$store.dispatch('chart/openEntryChart', {
         tickerId: `${item.symbol}-${item.timeframe}`,
